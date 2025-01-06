@@ -1,0 +1,17 @@
+{
+  "name": "cubing-time-standard",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "concurrently \"npm run start-client\" \"npm run start-server\"",
+    "start-client": "npm --prefix client run dev",
+    "start-server": "npm --prefix server run prod"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "concurrently": "^9.1.0"
+  }
+}

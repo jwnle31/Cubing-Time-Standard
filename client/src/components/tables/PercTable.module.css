@@ -1,0 +1,6 @@
+.sticky {
+  position: sticky;
+  left: 0;
+  background-color: var(--mantine-color-body);
+  z-index: 1;
+}
