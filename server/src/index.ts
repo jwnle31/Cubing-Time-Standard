@@ -31,7 +31,7 @@ export default class Server {
       next();
     });
     const corsOptions: CorsOptions = {
-      origin: process.env.origin,
+      origin: process.env.ORIGIN,
     };
     app.use(cors(corsOptions));
     app.use(express.json());
