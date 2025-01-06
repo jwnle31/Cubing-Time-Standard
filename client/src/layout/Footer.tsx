@@ -6,7 +6,11 @@ export function Footer() {
   return (
     <div className={classes.footer}>
       <Container className={classes.inner} size="lg">
-        <Anchor href="https://github.com/jwnle31/Cubing-Time-Standard">
+        <Anchor
+          href="https://github.com/jwnle31/Cubing-Time-Standard"
+          target="_blank"
+          rel="nofollow noopener noreferrer"
+        >
           <IconBrandGithub
             className={classes.icon}
             size="2.5rem"
