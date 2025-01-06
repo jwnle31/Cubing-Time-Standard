@@ -31,7 +31,7 @@ export default class Server {
       next();
     });
     const corsOptions: CorsOptions = {
-      origin: "http://localhost:5173",
+      origin: process.env.origin,
     };
     app.use(cors(corsOptions));
     app.use(express.json());
