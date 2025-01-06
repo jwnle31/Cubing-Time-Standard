@@ -1,7 +1,7 @@
 import axios from "axios";
 import { cache } from "../middlewares/cacheMiddleware";
-import { EVENTS } from "../../globals/wcaInfo";
-import { PERCENTILES } from "../../globals/appInfo";
+import { EVENTS } from "../globals/wcaInfo";
+import { PERCENTILES } from "../globals/appInfo";
 
 const percentilesString = PERCENTILES.join(",");
 
@@ -14,10 +14,7 @@ const percentileEndpoints: string[] = EVENTS.flatMap((event) =>
   )
 );
 
-const endpoints: string[] = [
-  ...percentileEndpoints,
-  "/api/stats/metadata", // Include the metadata endpoint
-];
+const endpoints: string[] = [...percentileEndpoints, "/api/stats/metadata"];
 
 export async function callEndpointsAndCache(): Promise<void> {
   for (const endpoint of endpoints) {
