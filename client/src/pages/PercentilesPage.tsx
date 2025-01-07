@@ -19,16 +19,16 @@ export function PercentilesPage() {
         </Text>
       </Container>
       <Container size="lg">
-        <h2>Single</h2>
+        <h2>Average</h2>
         <ScrollArea>
-          <PercSingleTable />
+          <PercAvgTable />
         </ScrollArea>
       </Container>
       <br />
       <Container size="lg">
-        <h2>Average</h2>
+        <h2>Single</h2>
         <ScrollArea>
-          <PercAvgTable />
+          <PercSingleTable />
         </ScrollArea>
       </Container>
       <br />
