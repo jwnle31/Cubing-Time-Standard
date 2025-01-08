@@ -16,7 +16,7 @@ import cx from "clsx";
 import classes from "./Header.module.css";
 
 const links = [
-  { link: "/", label: "Percentiles" },
+  { link: "/", label: "Distribution" },
   { link: "/coming-soon", label: "Coming Soon..." },
 ];
 

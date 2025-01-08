@@ -1,2 +1,2 @@
 export * from "./ComingSoonPage";
-export * from "./PercentilesPage";
+export * from "./DistributionPage";

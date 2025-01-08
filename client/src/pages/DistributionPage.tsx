@@ -3,7 +3,7 @@ import PercAvgTable from "../components/tables/PercAvgTable";
 import PercSingleTable from "../components/tables/PercSingleTable";
 import { useFetchMetadata } from "../hooks/useFetchMetadata";
 
-export function PercentilesPage() {
+export function DistributionPage() {
   const { data } = useFetchMetadata();
 
   return (
