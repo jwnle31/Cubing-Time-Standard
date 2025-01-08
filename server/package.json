@@ -4,7 +4,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon -e ts --exec ts-node server.ts --watch src",
-    "build": "tsc && cp .env build/",
+    "build-dev": "tsc && cp .env build/",
+    "build": "tsc",
     "start": "node build/server.js",
     "prod": "npm run build && npm run start"
   },
