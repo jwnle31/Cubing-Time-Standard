@@ -13,9 +13,9 @@ class StatRoutes {
   initializeRoutes() {
     this.router.get("/metadata/", cacheMiddleware, this.controller.getMetadata);
     this.router.get(
-      "/percentiles/:eventId/:type/",
+      "/distribution/:eventId/:type/",
       cacheMiddleware,
-      this.controller.getPercentiles
+      this.controller.getDistribution
     );
   }
 }

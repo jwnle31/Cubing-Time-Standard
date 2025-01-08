@@ -13,7 +13,7 @@ export default class StatsController {
     }
   }
 
-  async getPercentiles(req: Request, res: Response) {
+  async getDistribution(req: Request, res: Response) {
     try {
       const { eventId, type } = req.params;
       if (type !== "single" && type !== "average") {
@@ -24,15 +24,15 @@ export default class StatsController {
       }
 
       const percList = req.query.perc
-        ? (req.query.perc as string).split(",").map(Number) // Parse percentiles from query
+        ? (req.query.perc as string).split(",").map(Number)
         : Array.from({ length: 100 }, (_, i) => i + 1);
 
-      const percentiles = await statRepository.getPercentiles({
+      const distribution = await statRepository.getDistribution({
         eventId,
-        percentiles: percList,
+        percents: percList,
         type,
       });
-      res.status(200).send(percentiles);
+      res.status(200).send(distribution);
     } catch (err) {
       res.status(500).json({
         message: "Internal Server Error!",

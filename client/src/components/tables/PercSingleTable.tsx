@@ -1,12 +1,12 @@
 import { Skeleton, Table } from "@mantine/core";
 import { EVENTS, EVENTNAMES } from "../../globals/wcaInfo";
-import { PERCENTILES } from "../../globals/appInfo";
+import { PERCENTS } from "../../globals/appInfo";
 import { formatTime, process333mbfData } from "../../utils/dataFormat";
-import { useFetchPercentiles } from "../../hooks/useFetchPercentiles";
+import { useFetchDistribution } from "../../hooks/useFetchDistribution";
 import classes from "./PercTable.module.css";
 
 export default function PercSingleTable() {
-  const queries = useFetchPercentiles("single");
+  const queries = useFetchDistribution("single");
   const isError = queries.some((query) => query.isError);
   const percs = queries.map((query) => query.data);
 
@@ -17,7 +17,7 @@ export default function PercSingleTable() {
       <Table.Thead>
         <Table.Tr>
           <Table.Th className={classes.sticky}>Event</Table.Th>
-          {PERCENTILES.map((perc: number) => (
+          {PERCENTS.map((perc: number) => (
             <Table.Th key={perc}>{perc + "%"}</Table.Th>
           ))}
         </Table.Tr>
@@ -30,7 +30,7 @@ export default function PercSingleTable() {
               <Table.Td className={classes.sticky}>
                 {EVENTNAMES[eventId]}
               </Table.Td>
-              {PERCENTILES.map((perc, percIndex) => (
+              {PERCENTS.map((perc, percIndex) => (
                 <Table.Td key={perc}>
                   <Skeleton visible={!result}>
                     {result?.data[percIndex]

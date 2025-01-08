@@ -3,9 +3,9 @@ import { ArInternalMetadata, Rank } from "../models/stat.model";
 
 interface IStatRepository {
   getMetadata(): Promise<ArInternalMetadata[]>;
-  getPercentiles(searchParams: {
+  getDistribution(searchParams: {
     eventId: string;
-    percentiles?: number[];
+    percents?: number[];
   }): Promise<Rank[]>;
 }
 
@@ -23,15 +23,15 @@ class StatRepository implements IStatRepository {
     });
   }
 
-  getPercentiles(searchParams: {
+  getDistribution(searchParams: {
     eventId: string;
-    percentiles: number[];
+    percents: number[];
     type: string;
   }): Promise<Rank[]> {
     const tableName =
       searchParams.type === "single" ? "RanksSingle" : "RanksAverage";
 
-    const whereClause = searchParams.percentiles
+    const whereClause = searchParams.percents
       .map((p) => `ROUND(0.01 * ${p} * @row_num)`)
       .join(", ");
 
