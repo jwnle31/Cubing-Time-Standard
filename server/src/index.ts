@@ -15,19 +15,15 @@ export default class Server {
   }
 
   private config(app: Application): void {
-    app.use(
-      rateLimit({
-        max: 1000,
-        windowMs: 24 * 60 * 60 * 1000,
-        message: "Too many request from this IP",
-      })
-    );
+    // app.use(
+    //   rateLimit({
+    //     max: 1000,
+    //     windowMs: 24 * 60 * 60 * 1000,
+    //     message: "Too many request from this IP",
+    //   })
+    // );
     app.use((req, res, next) => {
-      if (this.isCronRunning) {
-        res.set("Cache-Control", "public, max-age=3600"); // Cache for 1 hour
-      } else {
-        res.set("Cache-Control", "public, max-age=86400"); // Cache for 1 day
-      }
+      res.set("Cache-Control", "public, max-age=86400"); // Cache for 1 day
       next();
     });
     const corsOptions: CorsOptions = {
