@@ -37,7 +37,8 @@ export default function PercSingleTable() {
                       ? eventId === "333fm"
                         ? result.data[percIndex].best
                         : eventId === "333mbf"
-                        ? process333mbfData(result.data[percIndex].best).solved
+                        ? process333mbfData(result.data[percIndex].best)
+                            .difference
                         : formatTime(result.data[percIndex].best)
                       : "placeho"}
                   </Skeleton>

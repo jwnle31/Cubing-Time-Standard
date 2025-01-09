@@ -30,28 +30,31 @@ class StatRepository implements IStatRepository {
   }): Promise<Rank[]> {
     const tableName =
       searchParams.type === "single" ? "RanksSingle" : "RanksAverage";
-
-    const whereClause = searchParams.percents
-      .map((p) => `ROUND(0.01 * ${p} * @row_num)`)
-      .join(", ");
+    const percents = searchParams.percents
+      .map((p) => `WHEN pr <= ${(p * 0.01).toFixed(2)} THEN ${p}`)
+      .join("\n");
 
     const query = `
-      SELECT *
-      FROM (
-          SELECT t.*, 
-                @row_num := @row_num + 1 AS row_num
-          FROM ${tableName} t, 
-              (SELECT @row_num := 0) counter
-          WHERE t.eventId = ?
-      ) AS temp
-      WHERE temp.row_num IN (${whereClause})
-      ORDER BY temp.row_num;
-    `;
-
-    const queryParams = [searchParams.eventId];
+      WITH Ranked AS (
+        SELECT 
+          best,
+          PERCENT_RANK() OVER (ORDER BY best) AS pr
+        FROM ${tableName}
+        WHERE eventId = '${searchParams.eventId}'
+      )
+      SELECT 
+        CASE 
+          ${percents}
+        END AS top,
+        MAX(best) AS best
+      FROM Ranked
+      WHERE pr <= ${(Math.max(...searchParams.percents) * 0.01).toFixed(2)}
+      GROUP BY top
+      ORDER BY top;
+    ;`;
 
     return new Promise((resolve, reject) => {
-      connection.query<Rank[]>(query, queryParams, (err, res) => {
+      connection.query<Rank[]>(query, (err, res) => {
         if (err) reject(err);
         else resolve(res);
       });

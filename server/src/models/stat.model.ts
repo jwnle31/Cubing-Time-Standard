@@ -8,10 +8,6 @@ export interface ArInternalMetadata extends RowDataPacket {
 }
 
 export interface Rank extends RowDataPacket {
-  personId: string;
-  eventId: string;
+  top: number;
   best: number;
-  worldRank: number;
-  continentRank: number;
-  countryRank: number;
 }
