@@ -17,7 +17,7 @@ const endpoints: string[] = [...distributionEndpoints, "/api/stats/metadata"];
 
 export async function callEndpointsAndCache(): Promise<void> {
   for (const endpoint of endpoints) {
-    const url = `${process.env.PORT}${endpoint}`;
+    const url = `${process.env.API_URL}${endpoint}`;
 
     try {
       console.log(`Calling ${url}...`);
