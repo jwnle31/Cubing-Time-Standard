@@ -1,0 +1,53 @@
+{
+    local_certs
+}
+
+
+{$DOMAIN_NAME} {
+    encode gzip
+    reverse_proxy client:80
+}
+
+www.{$DOMAIN_NAME} {
+	redir https://{$DOMAIN_NAME}{uri} permanent
+}
+
+api.{$DOMAIN_NAME} {
+    reverse_proxy api:8080
+
+	 header {
+        -X-Powered-By
+        -Server
+
+        # enable HSTS
+        Strict-Transport-Security max-age=31536000;
+
+        # disable clients from sniffing the media type
+        X-Content-Type-Options nosniff
+
+        # clickjacking protection
+        X-Frame-Options DENY
+
+        # XSS Protection
+        X-XSS-Protection "1; mode=block"
+    }
+
+	rate_limit {
+        # limit requests based on IP address
+        zone api_limit {
+            key {remote_host}
+            # if using Cloudflare proxy, use the following key:
+            # key {http.request.header.CF-Connecting-IP}
+            events 100
+            window 1m
+        }
+
+        zone burst_limit {
+            key {remote_host}
+            # if using Cloudflare proxy, use the following key:
+            # key {http.request.header.CF-Connecting-IP}
+            events 20
+            window 1s
+        }
+    }
+}
