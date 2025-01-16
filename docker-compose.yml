@@ -6,7 +6,7 @@ services:
       context: ./server
       target: production
     restart: unless-stopped
-    env_file: ./server/sample.env
+    env_file: ./server/.env
     networks:
       - cubing-time-standard
 
