@@ -46,7 +46,7 @@ api.{$DOMAIN_NAME} {
             key {remote_host}
             # if using Cloudflare proxy, use the following key:
             # key {http.request.header.CF-Connecting-IP}
-            events 20
+            events 40
             window 1s
         }
     }
