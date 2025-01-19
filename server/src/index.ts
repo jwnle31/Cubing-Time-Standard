@@ -42,7 +42,7 @@ export default class Server {
         console.log("Cron job started.");
         this.isCronRunning = true;
 
-        // await populateDatabase();
+        await populateDatabase();
         await callEndpointsAndCache();
 
         console.log("Cron job completed.");

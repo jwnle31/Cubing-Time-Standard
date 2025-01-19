@@ -110,7 +110,9 @@ export async function populateDatabase(): Promise<void> {
     );
 
     await connection.query("SET SQL_SAFE_UPDATES = 0;");
-    await connection.query("ALTER TABLE RanksSingle ADD COLUMN pr FLOAT;");
+    await connection.query(
+      "ALTER TABLE RanksSingle ADD COLUMN pr DECIMAL(7, 6);"
+    );
     await connection.query(`
       UPDATE RanksSingle r
       JOIN (

@@ -35,23 +35,18 @@ class StatRepository implements IStatRepository {
       .join("\n");
 
     const query = `
-      WITH Ranked AS (
-        SELECT 
-          best,
-          PERCENT_RANK() OVER (ORDER BY best) AS pr
-        FROM ${tableName}
-        WHERE eventId = '${searchParams.eventId}'
-      )
-      SELECT 
-        CASE 
+      SELECT
+        CASE
           ${percents}
         END AS top,
         MAX(best) AS best
-      FROM Ranked
-      WHERE pr <= ${(Math.max(...searchParams.percents) * 0.01).toFixed(2)}
+      FROM ${tableName}
+      WHERE eventId = '${searchParams.eventId}' AND pr <= ${(
+      Math.max(...searchParams.percents) * 0.01
+    ).toFixed(2)}
       GROUP BY top
       ORDER BY top;
-    ;`;
+    `;
 
     return new Promise((resolve, reject) => {
       connection.query<Rank[]>(query, (err, res) => {
