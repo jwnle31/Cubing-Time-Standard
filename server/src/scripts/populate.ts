@@ -109,6 +109,32 @@ export async function populateDatabase(): Promise<void> {
       path.resolve(__dirname, EXPORT_FOLDER + "WCA_export.sql")
     );
 
+    await connection.query("SET SQL_SAFE_UPDATES = 0;");
+    await connection.query("ALTER TABLE RanksSingle ADD COLUMN pr FLOAT;");
+    await connection.query(`
+      UPDATE RanksSingle r
+      JOIN (
+        SELECT 
+          personId,
+          eventId,
+          PERCENT_RANK() OVER (PARTITION BY eventId ORDER BY best ASC) AS calculated_percent_rank
+        FROM RanksSingle
+      ) er ON r.eventId = er.eventId AND r.personId = er.personId
+      SET r.pr = er.calculated_percent_rank;
+    `);
+    await connection.query("ALTER TABLE RanksAverage ADD COLUMN pr FLOAT;");
+    await connection.query(`
+      UPDATE RanksAverage r
+      JOIN (
+        SELECT 
+          personId,
+          eventId,
+          PERCENT_RANK() OVER (PARTITION BY eventId ORDER BY best ASC) AS calculated_percent_rank
+        FROM RanksAverage
+      ) er ON r.eventId = er.eventId AND r.personId = er.personId
+      SET r.pr = er.calculated_percent_rank;
+    `);
+
     console.log("Committing transaction...");
     await connection.query("COMMIT;");
     console.log("Database populated successfully.");
