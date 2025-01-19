@@ -17,6 +17,11 @@ class StatRoutes {
       cacheMiddleware,
       this.controller.getDistribution
     );
+    this.router.get(
+      "/pr/:personId/:type/",
+      cacheMiddleware,
+      this.controller.getPr
+    );
   }
 }
 

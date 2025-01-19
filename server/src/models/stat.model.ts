@@ -11,3 +11,8 @@ export interface Rank extends RowDataPacket {
   top: number;
   best: number;
 }
+
+export interface PersonalRecord extends RowDataPacket {
+  eventId: string;
+  pr: number;
+}

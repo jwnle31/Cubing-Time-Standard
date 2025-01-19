@@ -1,5 +1,5 @@
 import connection from "../db";
-import { ArInternalMetadata, Rank } from "../models/stat.model";
+import { ArInternalMetadata, Rank, PersonalRecord } from "../models/stat.model";
 
 interface IStatRepository {
   getMetadata(): Promise<ArInternalMetadata[]>;
@@ -7,6 +7,10 @@ interface IStatRepository {
     eventId: string;
     percents?: number[];
   }): Promise<Rank[]>;
+  getPr(searchParams: {
+    personId: string;
+    type: string;
+  }): Promise<PersonalRecord[]>;
 }
 
 class StatRepository implements IStatRepository {
@@ -52,6 +56,29 @@ class StatRepository implements IStatRepository {
       connection.query<Rank[]>(query, (err, res) => {
         if (err) reject(err);
         else resolve(res);
+      });
+    });
+  }
+
+  getPr(searchParams: {
+    personId: string;
+    type: string;
+  }): Promise<PersonalRecord[]> {
+    const tableName =
+      searchParams.type === "single" ? "RanksSingle" : "RanksAverage";
+
+    const query = `SELECT eventId, pr FROM ${tableName} WHERE personId = '${searchParams.personId}';`;
+
+    return new Promise((resolve, reject) => {
+      connection.query<PersonalRecord[]>(query, (err, res) => {
+        if (err) reject(err);
+        else
+          resolve(
+            res.map((entry) => ({
+              ...entry,
+              pr: Number(entry.pr),
+            }))
+          );
       });
     });
   }

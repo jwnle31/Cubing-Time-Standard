@@ -39,4 +39,22 @@ export default class StatsController {
       });
     }
   }
+
+  async getPr(req: Request, res: Response) {
+    try {
+      const { personId, type } = req.params;
+      if (type !== "single" && type !== "average") {
+        res.status(400).json({
+          message: "Type has to be single or average.",
+        });
+        return;
+      }
+      const pr = await statRepository.getPr({ personId, type });
+      res.status(200).send(pr);
+    } catch (err) {
+      res.status(500).json({
+        message: "Internal Server Error!",
+      });
+    }
+  }
 }
