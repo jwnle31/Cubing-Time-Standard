@@ -5,7 +5,11 @@ import { MantineProvider } from "@mantine/core";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Layout from "./layout/Layout";
-import { ComingSoonPage, DistributionPage } from "./pages/index";
+import {
+  ComingSoonPage,
+  DistributionPage,
+  PersonalRecordPage,
+} from "./pages/index";
 
 const queryClient = new QueryClient();
 
@@ -17,6 +21,7 @@ export default function App() {
           <Layout>
             <Routes>
               <Route path="/" element={<DistributionPage />} />
+              <Route path="/personal-record" element={<PersonalRecordPage />} />
               <Route path="/coming-soon" element={<ComingSoonPage />} />
             </Routes>
           </Layout>

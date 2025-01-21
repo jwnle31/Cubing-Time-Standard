@@ -9,6 +9,7 @@ export default class StatsController {
     } catch (err) {
       res.status(500).json({
         message: "Internal Server Error!",
+        err,
       });
     }
   }
@@ -36,6 +37,7 @@ export default class StatsController {
     } catch (err) {
       res.status(500).json({
         message: "Internal Server Error!",
+        err,
       });
     }
   }
@@ -54,6 +56,7 @@ export default class StatsController {
     } catch (err) {
       res.status(500).json({
         message: "Internal Server Error!",
+        err,
       });
     }
   }

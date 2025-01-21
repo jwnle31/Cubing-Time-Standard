@@ -17,6 +17,7 @@ import classes from "./Header.module.css";
 
 const links = [
   { link: "/", label: "Distribution" },
+  { link: "/personal-record", label: "Relative PR" },
   { link: "/coming-soon", label: "Coming Soon..." },
 ];
 

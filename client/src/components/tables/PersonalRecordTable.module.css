@@ -1,0 +1,41 @@
+.eventCell {
+  white-space: nowrap;
+}
+
+.prCell {
+  text-align: center;
+}
+
+.eventColumn {
+  cursor: pointer;
+  width: 20%;
+}
+
+.singleColumn,
+.averageColumn {
+  cursor: pointer;
+  text-align: center;
+  width: 40%;
+}
+
+.noDataCell {
+  text-align: center;
+  color: red;
+  margin-top: 1rem;
+}
+
+.firstRowTopLeft {
+  border-top-left-radius: 12px;
+}
+
+.lastRowBottomLeft {
+  border-bottom-left-radius: 12px;
+}
+
+.firstRowTopRight {
+  border-top-right-radius: 12px;
+}
+
+.lastRowBottomRight {
+  border-bottom-right-radius: 12px;
+}
