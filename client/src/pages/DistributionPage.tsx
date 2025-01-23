@@ -1,7 +1,8 @@
-import { Container, ScrollArea, Text } from "@mantine/core";
+import { Container, Flex, ScrollArea, Text } from "@mantine/core";
 import PercAvgTable from "../components/tables/PercAvgTable";
 import PercSingleTable from "../components/tables/PercSingleTable";
 import { useFetchMetadata } from "../hooks/useFetchMetadata";
+import { IconInfoCircle } from "@tabler/icons-react";
 
 export function DistributionPage() {
   const { data } = useFetchMetadata();
@@ -24,6 +25,12 @@ export function DistributionPage() {
           <PercAvgTable />
         </ScrollArea>
       </Container>
+      <Container size="lg" my="xl">
+        <Flex align="center">
+          <IconInfoCircle size={12} />
+          <Text size="xs">&nbsp;Only successful results are considered.</Text>
+        </Flex>
+      </Container>
       <br />
       <Container size="lg">
         <h2>Single</h2>
@@ -31,7 +38,12 @@ export function DistributionPage() {
           <PercSingleTable />
         </ScrollArea>
       </Container>
-      <br />
+      <Container size="lg" my="xl">
+        <Flex align="center">
+          <IconInfoCircle size={12} />
+          <Text size="xs">&nbsp;Only successful results are considered.</Text>
+        </Flex>
+      </Container>
       <Container size="lg">
         <h2>Acknowledgements</h2>
         <ul>

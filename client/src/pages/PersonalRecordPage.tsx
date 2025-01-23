@@ -138,7 +138,7 @@ export function PersonalRecordPage() {
       <Container size="lg" my="xl" p="0">
         <Flex align="center">
           <IconInfoCircle size={12} />
-          <Text size="xs">&nbsp;Only successful attempts are considered.</Text>
+          <Text size="xs">&nbsp;Only successful results are considered.</Text>
         </Flex>
       </Container>
     </Container>

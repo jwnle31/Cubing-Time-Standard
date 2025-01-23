@@ -6,6 +6,8 @@ services:
       context: ./server
       target: development
     restart: unless-stopped
+    environment:
+      - TZ=America/New_York
     env_file: ./server/.env
     volumes:
       - ./server:/app

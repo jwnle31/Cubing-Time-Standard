@@ -136,6 +136,15 @@ export async function populateDatabase(): Promise<void> {
       ) er ON r.eventId = er.eventId AND r.personId = er.personId
       SET r.pr = er.calculated_percent_rank;
     `);
+    await connection.query(
+      "CREATE INDEX idx_results_event_person_comp_round ON defaultdb.Results (eventId, personId, competitionId, roundTypeId, pos);"
+    );
+    await connection.query(
+      "CREATE INDEX idx_results_comp_event_round_person ON defaultdb.Results (competitionId, eventId, roundTypeId, personId);"
+    );
+    await connection.query(
+      "CREATE INDEX idx_personId ON defaultdb.Results (personId);"
+    );
 
     console.log("Committing transaction...");
     await connection.query("COMMIT;");
