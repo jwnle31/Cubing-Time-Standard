@@ -1,5 +1,10 @@
 import connection from "../db";
-import { ArInternalMetadata, Rank, PersonalRecord } from "../models/stat.model";
+import {
+  ArInternalMetadata,
+  Rank,
+  PersonalRecord,
+  H2HInfo,
+} from "../models/stat.model";
 
 interface IStatRepository {
   getMetadata(): Promise<ArInternalMetadata[]>;
@@ -11,6 +16,10 @@ interface IStatRepository {
     personId: string;
     type: string;
   }): Promise<PersonalRecord[]>;
+  getH2H(searchParams: {
+    personId1: string;
+    personId2: string;
+  }): Promise<H2HInfo[]>;
 }
 
 class StatRepository implements IStatRepository {
@@ -79,6 +88,37 @@ class StatRepository implements IStatRepository {
               pr: Number(entry.pr),
             }))
           );
+      });
+    });
+  }
+
+  getH2H(searchParams: {
+    personId1: string;
+    personId2: string;
+  }): Promise<H2HInfo[]> {
+    const query = `
+        SELECT 
+          r1.competitionId,
+          r1.eventId,
+          r1.roundTypeId,
+          r1.pos AS pos1,
+          r2.pos AS pos2,
+          CASE
+              WHEN r1.pos < r2.pos THEN 1
+              WHEN r2.pos < r1.pos THEN 2
+              ELSE 0
+          END AS winner
+        FROM (SELECT * FROM Results WHERE personId = '${searchParams.personId1}') r1
+        JOIN (SELECT * FROM Results WHERE personId = '${searchParams.personId2}') r2
+            ON r1.competitionId = r2.competitionId
+            AND r1.eventId = r2.eventId
+            AND r1.roundTypeId = r2.roundTypeId;
+      `;
+
+    return new Promise((resolve, reject) => {
+      connection.query<H2HInfo[]>(query, (err, res) => {
+        if (err) reject(err);
+        else resolve(res);
       });
     });
   }

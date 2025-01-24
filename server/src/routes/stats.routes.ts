@@ -22,6 +22,11 @@ class StatRoutes {
       cacheMiddleware,
       this.controller.getPr
     );
+    this.router.get(
+      "/h2h/:personId1/:personId2/",
+      cacheMiddleware,
+      this.controller.getH2H
+    );
   }
 }
 

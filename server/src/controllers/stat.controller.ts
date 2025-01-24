@@ -60,4 +60,17 @@ export default class StatsController {
       });
     }
   }
+
+  async getH2H(req: Request, res: Response) {
+    try {
+      const { personId1, personId2 } = req.params;
+      const h2h = await statRepository.getH2H({ personId1, personId2 });
+      res.status(200).send(h2h);
+    } catch (err) {
+      res.status(500).json({
+        message: "Internal Server Error!",
+        err,
+      });
+    }
+  }
 }
