@@ -10,6 +10,7 @@ import {
   DistributionPage,
   PersonalRecordPage,
 } from "./pages/index";
+// import { HeadToHeadPage } from "./pages/HeadToHeadPage";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +24,7 @@ export default function App() {
               <Route path="/" element={<DistributionPage />} />
               <Route path="/personal-record" element={<PersonalRecordPage />} />
               <Route path="/coming-soon" element={<ComingSoonPage />} />
+              {/* <Route path="head-to-head" element={<HeadToHeadPage />} /> */}
             </Routes>
           </Layout>
         </BrowserRouter>
