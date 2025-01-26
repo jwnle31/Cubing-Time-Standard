@@ -6,15 +6,24 @@
 //   Text,
 //   Title,
 //   Badge,
-//   Group,
 //   Card,
 //   Accordion,
 //   TextInput,
 //   Button,
 // } from "@mantine/core";
 // import { useState } from "react";
-// import { IconTrophy } from "@tabler/icons-react";
 // import { useFetchH2H } from "../hooks/useFetchHeadToHead";
+// import { IconCircleFilled, IconEqual } from "@tabler/icons-react";
+// import { EVENTS, EVENTNAMES } from "../globals/wcaInfo";
+
+// export interface H2HInfo {
+//   competitionId: string;
+//   eventId: string;
+//   roundTypeId: string;
+//   pos1: number;
+//   pos2: number;
+//   winner: number;
+// }
 
 // export function HeadToHeadPage() {
 //   const [personId1, setPersonId1] = useState("2009zemd01"); // Default ID
@@ -35,35 +44,22 @@
 
 //   const renderRoundType = (roundTypeId: string) => {
 //     const roundMap: Record<string, string> = {
-//       "1": "Round 1",
-//       "2": "Round 2",
-//       "3": "Round 3",
+//       "0": "Qualification Round",
+//       "1": "First Round",
+//       "2": "Second Round",
+//       "3": "Semi Final",
+//       b: "B Final",
+//       c: "Final",
+//       d: "First Round",
+//       e: "Second Round",
 //       f: "Final",
-//       d: "Draw",
+//       g: "Semi Final",
+//       h: "Qualification Round",
 //     };
 //     return roundMap[roundTypeId] || roundTypeId.toUpperCase();
 //   };
 
-//   const renderEventName = (eventId: string) => {
-//     const eventMap: Record<string, string> = {
-//       "333": "3x3 Cube",
-//       "444": "4x4 Cube",
-//       "555": "5x5 Cube",
-//       "666": "6x6 Cube",
-//       "777": "7x7 Cube",
-//       "222": "2x2 Cube",
-//       "333oh": "3x3 One-Handed",
-//       "333bf": "3x3 Blindfolded",
-//       magic: "Magic",
-//       pyram: "Pyraminx",
-//       sq1: "Square-1",
-//       minx: "Megaminx",
-//       "333fm": "Fewest Moves",
-//     };
-//     return eventMap[eventId] || eventId.toUpperCase();
-//   };
-
-//   const computeScores = (matches: typeof h2hData) => {
+//   const computeScores = (matches: H2HInfo[]) => {
 //     let totalScore1 = 0;
 //     let totalScore2 = 0;
 //     const eventScores: Record<string, { score1: number; score2: number }> = {};
@@ -79,120 +75,250 @@
 //       } else if (winner === 2) {
 //         totalScore2++;
 //         eventScores[match.eventId].score2++;
+//       } else {
+//         totalScore1 += 0.5;
+//         totalScore2 += 0.5;
+//         eventScores[match.eventId].score1 += 0.5;
+//         eventScores[match.eventId].score2 += 0.5;
 //       }
 //     });
 
 //     return { totalScore1, totalScore2, eventScores };
 //   };
 
-//   if (isLoading) return <Text align="center">Loading...</Text>;
-//   if (isError)
-//     return (
-//       <Text align="center" color="red">
-//         Failed to load data.
-//       </Text>
-//     );
-
 //   const { totalScore1, totalScore2, eventScores } = computeScores(
-//     h2hData || []
+//     (h2hData || []).filter((x) => EVENTS.includes(x.eventId))
 //   );
 
 //   return (
 //     <Container size="lg" mt="lg">
-//       <Title order={2} color="teal" align="center" mb="md">
-//         Head-to-Head Results
-//       </Title>
-
 //       {/* Input Form */}
 //       <Flex justify="center" align="center" gap="sm" mb="lg">
 //         <TextInput
-//           label="Player 1 ID"
+//           label={
+//             <Flex align="center">
+//               <IconCircleFilled
+//                 size={16}
+//                 color="#00D4FF"
+//                 style={{ marginRight: "4px" }}
+//               />
+//               Person 1 ID
+//             </Flex>
+//           }
 //           value={personId1}
 //           onChange={(e) => setPersonId1(e.target.value)}
-//           placeholder="Enter Player 1 ID"
+//           placeholder="Enter Person 1 ID"
 //         />
 //         <TextInput
-//           label="Player 2 ID"
+//           label={
+//             <Flex align="center">
+//               <IconCircleFilled
+//                 size={16}
+//                 color="#D4E822"
+//                 style={{ marginRight: "4px" }}
+//               />
+//               Person 2 ID
+//             </Flex>
+//           }
 //           value={personId2}
 //           onChange={(e) => setPersonId2(e.target.value)}
-//           placeholder="Enter Player 2 ID"
+//           placeholder="Enter Person 2 ID"
 //         />
 //         <Button color="teal" onClick={handleFormSubmit}>
 //           Fetch Results
 //         </Button>
 //       </Flex>
+//       <br />
+//       <br />
+//       {isLoading ? (
+//         <Text>Loading...</Text>
+//       ) : isError ? (
+//         <Text color="red">Failed to load data.</Text>
+//       ) : (
+//         <>
+//           {/* Total Score */}
+//           <Flex justify="center" align="center" mb="lg">
+//             <Card
+//               padding="md"
+//               // radius="md"
+//               style={{
+//                 backgroundColor:
+//                   totalScore1 > totalScore2
+//                     ? "rgba(0, 212, 255, 0.05)" // Transparent blue for Person 1
+//                     : totalScore1 < totalScore2
+//                     ? "rgba(212, 224, 47, 0.05)" // Transparent yellow for Person 2
+//                     : "rgba(192, 192, 192, 0.05)", // Transparent gray for ties
+//                 borderLeft:
+//                   totalScore1 > totalScore2
+//                     ? "4px solid #00D4FF" // Blue border for Person 1
+//                     : totalScore1 < totalScore2
+//                     ? "4px solid #D4E822" // Yellow border for Person 2
+//                     : "4px solid gray", // Gray border for ties
+//                 borderRight:
+//                   totalScore1 > totalScore2
+//                     ? "4px solid #00D4FF" // Blue border for Person 1
+//                     : totalScore1 < totalScore2
+//                     ? "4px solid #D4E822" // Yellow border for Person 2
+//                     : "4px solid gray", // Gray border for ties
+//               }}
+//             >
+//               <h2>
+//                 {totalScore1} : {totalScore2}
+//               </h2>
+//             </Card>
+//           </Flex>
 
-//       {/* Total Score */}
-//       <Flex justify="center" align="center" mb="lg">
-//         <Card shadow="sm" padding="md" radius="md" withBorder>
-//           <Text align="center" size="xl" weight="bold" color="teal">
-//             Total Score: {totalScore1} : {totalScore2}
-//           </Text>
-//         </Card>
-//       </Flex>
+//           {/* Results Table with Accordion */}
+//           <ScrollArea>
+//             <Accordion variant="separated">
+//               {Object.keys(eventScores).map((eventId) => {
+//                 const eventMatches =
+//                   h2hData?.filter((match) => match.eventId === eventId) || [];
+//                 const { score1, score2 } = eventScores[eventId];
 
-//       {/* Results Table with Accordion */}
-//       <ScrollArea>
-//         <Accordion variant="separated">
-//           {Object.keys(eventScores).map((eventId) => {
-//             const eventMatches =
-//               h2hData?.filter((match) => match.eventId === eventId) || [];
-//             const { score1, score2 } = eventScores[eventId];
+//                 return (
+//                   <Accordion.Item value={eventId} key={eventId}>
+//                     <Accordion.Control
+//                       style={{
+//                         backgroundColor:
+//                           score1 > score2
+//                             ? "rgba(0, 212, 255, 0.05)" // Transparent blue for Person 1
+//                             : score1 < score2
+//                             ? "rgba(212, 224, 47, 0.05)" // Transparent yellow for Person 2
+//                             : "rgba(192, 192, 192, 0.05)", // Transparent gray for ties
+//                         borderLeft:
+//                           score1 > score2
+//                             ? "4px solid #00D4FF" // Blue border for Person 1
+//                             : score1 < score2
+//                             ? "4px solid #D4E822" // Yellow border for Person 2
+//                             : "4px solid gray", // Gray border for ties
+//                       }}
+//                     >
+//                       <Flex justify="space-between" align="center">
+//                         <Title order={6} w={20} style={{ textWrap: "nowrap" }}>
+//                           {EVENTNAMES[eventId]}
+//                         </Title>
+//                         <Text fw={700}>
+//                           {score1} : {score2}
+//                         </Text>
+//                         <Text></Text>
+//                       </Flex>
+//                     </Accordion.Control>
 
-//             return (
-//               <Accordion.Item value={eventId} key={eventId}>
-//                 <Accordion.Control>
-//                   <Title order={4} color="teal" mb="sm">
-//                     {renderEventName(eventId)} - Subscore: {score1} : {score2}
-//                   </Title>
-//                 </Accordion.Control>
-//                 <Accordion.Panel>
-//                   <Table highlightOnHover verticalSpacing="sm">
-//                     <thead>
-//                       <tr>
-//                         <th>Competition</th>
-//                         <th>Round</th>
-//                         <th>Player 1 Position</th>
-//                         <th>Player 2 Position</th>
-//                         <th>Winner</th>
-//                       </tr>
-//                     </thead>
-//                     <tbody>
-//                       {eventMatches.map((match, index) => (
-//                         <tr key={index}>
-//                           <td>
-//                             <Badge color="teal" size="lg">
-//                               {match.competitionId}
-//                             </Badge>
-//                           </td>
-//                           <td>{renderRoundType(match.roundTypeId)}</td>
-//                           <td>
-//                             <Text color="teal">{match.pos1}</Text>
-//                           </td>
-//                           <td>
-//                             <Text color="teal">{match.pos2}</Text>
-//                           </td>
-//                           <td>
-//                             <Group spacing="xs">
-//                               <IconTrophy size={16} color="teal" />
-//                               <Text
-//                                 color={match.winner === 1 ? "teal" : "red"}
-//                                 weight="bold"
-//                               >
-//                                 Player {match.winner}
-//                               </Text>
-//                             </Group>
-//                           </td>
-//                         </tr>
-//                       ))}
-//                     </tbody>
-//                   </Table>
-//                 </Accordion.Panel>
-//               </Accordion.Item>
-//             );
-//           })}
-//         </Accordion>
-//       </ScrollArea>
+//                     <Accordion.Panel>
+//                       <Table highlightOnHover verticalSpacing="sm">
+//                         <Table.Thead>
+//                           <Table.Tr>
+//                             <Table.Th>Competition</Table.Th>
+//                             <Table.Th visibleFrom="sm">Round</Table.Th>
+//                             <Table.Th visibleFrom="sm" ta="center">
+//                               P1 Place
+//                             </Table.Th>
+//                             <Table.Th visibleFrom="sm" ta="center">
+//                               P2 Place
+//                             </Table.Th>
+//                             <Table.Th
+//                               style={{ textWrap: "nowrap" }}
+//                               ta="center"
+//                             >
+//                               Winner
+//                             </Table.Th>
+//                           </Table.Tr>
+//                         </Table.Thead>
+
+//                         <Table.Tbody>
+//                           {eventMatches.map((match, index) => (
+//                             <Table.Tr
+//                               key={index}
+//                               style={{
+//                                 backgroundColor:
+//                                   match.winner === 1
+//                                     ? "rgba(0, 212, 255, 0.05)" // Transparent blue for Person 1
+//                                     : match.winner === 2
+//                                     ? "rgba(212, 224, 47, 0.05)" // Transparent yellow for Person 2
+//                                     : "rgba(192, 192, 192, 0.05)", // Transparent gray for ties
+//                                 borderLeft:
+//                                   match.winner === 1
+//                                     ? "4px solid #00D4FF" // Blue border for Person 1
+//                                     : match.winner === 2
+//                                     ? "4px solid #D4E822" // Yellow border for Person 2
+//                                     : "4px solid gray", // Gray border for ties
+//                               }}
+//                             >
+//                               <Table.Td>
+//                                 <Badge color="teal" size="lg">
+//                                   {match.competitionId}
+//                                 </Badge>
+//                               </Table.Td>
+//                               <Table.Td visibleFrom="sm">
+//                                 {renderRoundType(match.roundTypeId)}
+//                               </Table.Td>
+//                               <Table.Td visibleFrom="sm" ta="center">
+//                                 <Text>{match.pos1}</Text>
+//                               </Table.Td>
+//                               <Table.Td visibleFrom="sm" ta="center">
+//                                 <Text>{match.pos2}</Text>
+//                               </Table.Td>
+//                               <Table.Td ta="center">
+//                                 <Flex justify="center">
+//                                   {match.winner === 1 && (
+//                                     <Flex align="center">
+//                                       <IconCircleFilled
+//                                         size={16}
+//                                         color="#00D4FF"
+//                                         style={{ marginRight: "4px" }}
+//                                       />
+//                                       <Text
+//                                         fw="bold"
+//                                         style={{ textWrap: "nowrap" }}
+//                                         visibleFrom="xs"
+//                                       >
+//                                         {personId1.toUpperCase()}
+//                                       </Text>
+//                                     </Flex>
+//                                   )}
+//                                   {match.winner === 2 && (
+//                                     <Flex align="center">
+//                                       <IconCircleFilled
+//                                         size={16}
+//                                         color="#D4E822"
+//                                         style={{ marginRight: "4px" }}
+//                                       />
+//                                       <Text
+//                                         fw="bold"
+//                                         style={{ textWrap: "nowrap" }}
+//                                         visibleFrom="xs"
+//                                       >
+//                                         {personId2.toUpperCase()}
+//                                       </Text>
+//                                     </Flex>
+//                                   )}
+//                                   {match.winner === 0 && (
+//                                     <Flex align="center">
+//                                       <IconEqual
+//                                         size={16}
+//                                         color="gray"
+//                                         style={{
+//                                           marginRight: "4px",
+//                                         }}
+//                                       />
+//                                       <Text visibleFrom="xs">Tie</Text>
+//                                     </Flex>
+//                                   )}
+//                                 </Flex>
+//                               </Table.Td>
+//                             </Table.Tr>
+//                           ))}
+//                         </Table.Tbody>
+//                       </Table>
+//                     </Accordion.Panel>
+//                   </Accordion.Item>
+//                 );
+//               })}
+//             </Accordion>
+//           </ScrollArea>
+//         </>
+//       )}
 //     </Container>
 //   );
 // }
