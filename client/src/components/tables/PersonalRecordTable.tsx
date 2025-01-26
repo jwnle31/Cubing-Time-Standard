@@ -121,6 +121,7 @@ export const PersonalRecordTable = ({
             })}
             c={avgTextColor}
             bg={avgBgColor}
+            bd={avgBgColor}
           >
             {avgPr !== null ? `${avgPr.toFixed(2)}%` : "N/A"}
           </Table.Td>
