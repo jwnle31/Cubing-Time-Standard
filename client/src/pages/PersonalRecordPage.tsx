@@ -13,6 +13,7 @@ import { PersonalRecordTable } from "../components/tables/PersonalRecordTable";
 import { calculateTealGradient } from "../utils/color";
 import { IconInfoCircle } from "@tabler/icons-react";
 import styles from "./PersonalRecordPage.module.css";
+import { validateWCAId } from "../utils/validate";
 
 export function PersonalRecordPage() {
   const [personId, setPersonId] = useState<string>("");
@@ -38,13 +39,11 @@ export function PersonalRecordPage() {
   } = useFetchPr(currentPersonId || "", "average");
 
   const handleSearch = () => {
-    const regex = /^\d{4}[A-Za-z]{4}\d{2}$/; // 4 numbers, 4 letters, 2 numbers
-    if (!regex.test(personId)) {
-      setError("Invalid WCA ID format. Use 4 digits, 4 letters, and 2 digits.");
-      return;
-    }
-    setError(null);
+    const validationError = validateWCAId(personId);
+    setError(validationError);
+    if (validationError) return;
     setCurrentPersonId(personId);
+
     setTimeout(() => {
       refetchSingle();
       refetchAvg();

@@ -1,0 +1,52 @@
+.cardWinner1 {
+  background-color: var(--bg-match-1);
+  border-left: 4px solid var(--color-match-1);
+  border-right: 4px solid var(--color-match-1);
+}
+
+.cardWinner2 {
+  background-color: var(--bg-match-2);
+  border-left: 4px solid var(--color-match-2);
+  border-right: 4px solid var(--color-match-2);
+}
+
+.cardTie {
+  background-color: var(--bg-match-tie);
+  border-left: 4px solid var(--color-match-tie);
+  border-right: 4px solid var(--color-match-tie);
+}
+
+.accordionWinner1 {
+  background-color: var(--bg-match-1);
+  border-left: 4px solid var(--color-match-1);
+}
+
+.accordionWinner2 {
+  background-color: var(--bg-match-2);
+  border-left: 4px solid var(--color-match-2);
+}
+
+.accordionTie {
+  background-color: var(--bg-match-tie);
+  border-left: 4px solid var(--color-match-tie);
+}
+
+.color1 {
+  color: var(--color-match-1);
+}
+
+.color2 {
+  color: var(--color-match-2);
+}
+
+.colorTie {
+  color: var(--color-match-tie);
+}
+
+.iconCircle {
+  margin-right: 4px;
+}
+
+.textNoWrap {
+  white-space: nowrap;
+}

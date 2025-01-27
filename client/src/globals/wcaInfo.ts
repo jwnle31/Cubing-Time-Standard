@@ -18,7 +18,7 @@ export const EVENTS = [
   "333mbf",
 ];
 
-export const EVENTNAMES: { [key: string]: string } = {
+export const EVENTNAMES: Record<string, string> = {
   "333": "3x3x3",
   "222": "2x2x2",
   "444": "4x4x4",
@@ -36,4 +36,18 @@ export const EVENTNAMES: { [key: string]: string } = {
   "444bf": "4BLD",
   "555bf": "5BLD",
   "333mbf": "MBLD",
+};
+
+export const ROUNDNAMES: Record<string, string> = {
+  "0": "Qualification Round",
+  "1": "First Round",
+  "2": "Second Round",
+  "3": "Semi Final",
+  b: "B Final",
+  c: "Final",
+  d: "First Round",
+  e: "Second Round",
+  f: "Final",
+  g: "Semi Final",
+  h: "Qualification Round",
 };
