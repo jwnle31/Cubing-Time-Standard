@@ -20,7 +20,7 @@ class StatRoutes {
     this.router.get(
       "/pr/:personId/:type/",
       cacheMiddleware,
-      this.controller.getPr
+      this.controller.getRr
     );
     this.router.get(
       "/h2h/:personId1/:personId2/",

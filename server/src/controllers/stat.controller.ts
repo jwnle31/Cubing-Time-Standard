@@ -42,7 +42,7 @@ export default class StatsController {
     }
   }
 
-  async getPr(req: Request, res: Response) {
+  async getRr(req: Request, res: Response) {
     try {
       const { personId, type } = req.params;
       if (type !== "single" && type !== "average") {
@@ -51,8 +51,8 @@ export default class StatsController {
         });
         return;
       }
-      const pr = await statRepository.getPr({ personId, type });
-      res.status(200).send(pr);
+      const rr = await statRepository.getRr({ personId, type });
+      res.status(200).send(rr);
     } catch (err) {
       res.status(500).json({
         message: "Internal Server Error!",

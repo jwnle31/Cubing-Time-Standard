@@ -2,24 +2,24 @@ import { Table, Text } from "@mantine/core";
 import { EVENTS, EVENTNAMES } from "../../globals/wcaInfo";
 import { calculateTealGradient, getTextColor } from "../../utils/color";
 import clsx from "clsx";
-import styles from "./PersonalRecordTable.module.css";
-import type { PersonalRecord } from "../../hooks/useFetchPersonalRecord";
+import styles from "./RelativeRecordTable.module.css";
+import type { RelativeRecord } from "../../hooks/useFetchRelativeRecord";
 
-interface PersonalRecordTableProps {
-  singleData: PersonalRecord[] | null;
-  avgData: PersonalRecord[] | null;
+interface RelativeRecordTableProps {
+  singleData: RelativeRecord[] | null;
+  avgData: RelativeRecord[] | null;
   sortBy: "single" | "average" | "eventId";
   sortDirection: "asc" | "desc";
   onSort: (column: "single" | "average" | "eventId") => void;
 }
 
-export const PersonalRecordTable = ({
+export const RelativeRecordTable = ({
   singleData,
   avgData,
   sortBy,
   sortDirection,
   onSort,
-}: PersonalRecordTableProps) => {
+}: RelativeRecordTableProps) => {
   const renderTableRows = () => {
     const allEventIds = new Set([
       ...(singleData || []).map((r) => r.eventId),
@@ -30,9 +30,9 @@ export const PersonalRecordTable = ({
       const getValue = (row: any) => {
         switch (sortBy) {
           case "single":
-            return row.singlePr ?? 101;
+            return row.singleRr ?? 101;
           case "average":
-            return row.avgPr ?? 101;
+            return row.avgRr ?? 101;
           case "eventId":
             return EVENTS.indexOf(row.eventId) ?? 101;
           default:
@@ -53,16 +53,16 @@ export const PersonalRecordTable = ({
         const singleRecord = singleData?.find((r) => r.eventId === eventId);
         const avgRecord = avgData?.find((r) => r.eventId === eventId);
 
-        const singlePr = singleRecord ? singleRecord.pr * 100 : null;
-        const avgPr = avgRecord ? avgRecord.pr * 100 : null;
+        const singleRr = singleRecord ? singleRecord.pr * 100 : null;
+        const avgRr = avgRecord ? avgRecord.pr * 100 : null;
 
         const singleTextColor = getTextColor(singleRecord?.pr ?? 1);
         const avgTextColor = getTextColor(avgRecord?.pr ?? 1);
 
         return {
           eventId,
-          singlePr,
-          avgPr,
+          singleRr,
+          avgRr,
           singleTextColor,
           avgTextColor,
           singleBgColor: calculateTealGradient(singleRecord?.pr ?? 1),
@@ -83,8 +83,8 @@ export const PersonalRecordTable = ({
       (
         {
           eventId,
-          singlePr,
-          avgPr,
+          singleRr,
+          avgRr,
           singleTextColor,
           avgTextColor,
           singleBgColor,
@@ -106,7 +106,7 @@ export const PersonalRecordTable = ({
             c={singleTextColor}
             bg={singleBgColor}
           >
-            {singlePr !== null ? `${singlePr.toFixed(2)}%` : "N/A"}
+            {singleRr !== null ? `${singleRr.toFixed(2)}%` : "N/A"}
           </Table.Td>
           <Table.Td
             className={clsx(styles.prCell, {
@@ -119,7 +119,7 @@ export const PersonalRecordTable = ({
             bg={avgBgColor}
             bd={avgBgColor}
           >
-            {avgPr !== null ? `${avgPr.toFixed(2)}%` : "N/A"}
+            {avgRr !== null ? `${avgRr.toFixed(2)}%` : "N/A"}
           </Table.Td>
         </Table.Tr>
       )

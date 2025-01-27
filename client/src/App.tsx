@@ -8,7 +8,7 @@ import Layout from "./layout/Layout";
 import {
   ComingSoonPage,
   DistributionPage,
-  PersonalRecordPage,
+  RelativeRecordPage,
 } from "./pages/index";
 import { HeadToHeadPage } from "./pages/HeadToHeadPage";
 
@@ -24,7 +24,7 @@ export default function App() {
               <Route path="/" element={<DistributionPage />} />
               <Route
                 path="/personal-record/:personId?"
-                element={<PersonalRecordPage />}
+                element={<RelativeRecordPage />}
               />
               <Route path="/coming-soon" element={<ComingSoonPage />} />
               <Route

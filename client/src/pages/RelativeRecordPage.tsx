@@ -9,15 +9,15 @@ import {
   Flex,
   Title,
 } from "@mantine/core";
-import { useFetchPr } from "../hooks/useFetchPersonalRecord";
-import { PersonalRecordTable } from "../components/tables/PersonalRecordTable";
+import { useFetchRr } from "../hooks/useFetchRelativeRecord";
+import { RelativeRecordTable } from "../components/tables/RelativeRecordTable";
 import { calculateTealGradient } from "../utils/color";
 import { IconInfoCircle } from "@tabler/icons-react";
-import styles from "./PersonalRecordPage.module.css";
+import styles from "./RelativeRecordPage.module.css";
 import { validateWCAId } from "../utils/validate";
 import { useParams, useNavigate } from "react-router-dom";
 
-export function PersonalRecordPage() {
+export function RelativeRecordPage() {
   const { personId: initialPersonId } = useParams();
   const navigate = useNavigate();
 
@@ -37,13 +37,13 @@ export function PersonalRecordPage() {
     data: singleData,
     isLoading: isLoadingSingle,
     isError: isErrorSingle,
-  } = useFetchPr(currentPersonId || "", "single");
+  } = useFetchRr(currentPersonId || "", "single");
 
   const {
     data: avgData,
     isLoading: isLoadingAvg,
     isError: isErrorAvg,
-  } = useFetchPr(currentPersonId || "", "average");
+  } = useFetchRr(currentPersonId || "", "average");
 
   useEffect(() => {
     setPersonId(initialPersonId || "");
@@ -118,7 +118,7 @@ export function PersonalRecordPage() {
           !isErrorAvg &&
           avgData &&
           initialPersonId && (
-            <PersonalRecordTable
+            <RelativeRecordTable
               singleData={singleData}
               avgData={avgData}
               sortBy={sortBy}

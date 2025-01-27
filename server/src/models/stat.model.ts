@@ -12,7 +12,7 @@ export interface Rank extends RowDataPacket {
   best: number;
 }
 
-export interface PersonalRecord extends RowDataPacket {
+export interface RelativeRecord extends RowDataPacket {
   eventId: string;
   pr: number;
 }

@@ -2,7 +2,7 @@ import connection from "../db"; // Import the pool
 import {
   ArInternalMetadata,
   Rank,
-  PersonalRecord,
+  RelativeRecord,
   H2HInfo,
 } from "../models/stat.model";
 
@@ -12,10 +12,10 @@ interface IStatRepository {
     eventId: string;
     percents?: number[];
   }): Promise<Rank[]>;
-  getPr(searchParams: {
+  getRr(searchParams: {
     personId: string;
     type: string;
-  }): Promise<PersonalRecord[]>;
+  }): Promise<RelativeRecord[]>;
   getH2H(searchParams: {
     personId1: string;
     personId2: string;
@@ -62,27 +62,27 @@ class StatRepository implements IStatRepository {
       const [rows] = await connection.execute<Rank[]>(query);
       return rows;
     } catch (err) {
-      throw err; // Handle error accordingly
+      throw err;
     }
   }
 
-  async getPr(searchParams: {
+  async getRr(searchParams: {
     personId: string;
     type: string;
-  }): Promise<PersonalRecord[]> {
+  }): Promise<RelativeRecord[]> {
     const tableName =
       searchParams.type === "single" ? "RanksSingle" : "RanksAverage";
 
     const query = `SELECT eventId, pr FROM ${tableName} WHERE personId = '${searchParams.personId}';`;
 
     try {
-      const [rows] = await connection.execute<PersonalRecord[]>(query);
+      const [rows] = await connection.execute<RelativeRecord[]>(query);
       return rows.map((entry) => ({
         ...entry,
         pr: Number(entry.pr),
       }));
     } catch (err) {
-      throw err; // Handle error accordingly
+      throw err;
     }
   }
 
@@ -113,7 +113,7 @@ class StatRepository implements IStatRepository {
       const [rows] = await connection.execute<H2HInfo[]>(query);
       return rows;
     } catch (err) {
-      throw err; // Handle error accordingly
+      throw err;
     }
   }
 }

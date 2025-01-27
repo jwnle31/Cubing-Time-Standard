@@ -1,24 +1,24 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
-export interface PersonalRecord {
+export interface RelativeRecord {
   eventId: string;
   pr: number;
 }
 
 const BASE_URL = `${import.meta.env.VITE_API_URL}/api/stats/pr`;
 
-const fetchPr = async (personId: string, type: "single" | "average") => {
+const fetchRr = async (personId: string, type: "single" | "average") => {
   const url = `${BASE_URL}/${personId}/${type}`;
   const response = await axios.get(url);
   return response.data;
 };
 
-export const useFetchPr = (personId: string, type: "single" | "average") => {
+export const useFetchRr = (personId: string, type: "single" | "average") => {
   personId = personId.toUpperCase();
-  return useQuery<PersonalRecord[], Error>({
-    queryKey: [`${personId}-${type}-pr`],
-    queryFn: () => fetchPr(personId, type),
+  return useQuery<RelativeRecord[], Error>({
+    queryKey: [`${personId}-${type}-Rr`],
+    queryFn: () => fetchRr(personId, type),
     enabled: !!personId,
   });
 };
