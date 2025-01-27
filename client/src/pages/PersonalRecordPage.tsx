@@ -7,6 +7,7 @@ import {
   Loader,
   Center,
   Flex,
+  Title,
 } from "@mantine/core";
 import { useFetchPr } from "../hooks/useFetchPersonalRecord";
 import { PersonalRecordTable } from "../components/tables/PersonalRecordTable";
@@ -64,51 +65,53 @@ export function PersonalRecordPage() {
   };
 
   return (
-    <Container size="lg" mt="xl">
-      <form onSubmit={handleFormSubmit}>
-        <Container size="xs" mb="xl" px="0" className={styles.inputContainer}>
-          <TextInput
-            placeholder="e.g. 2009ZEMD01"
-            label="WCA ID"
-            value={personId}
-            onChange={(e) => setPersonId(e.currentTarget.value)}
-            mb="xs"
-            size="md"
-            error={error}
-          />
-          <Button
-            type="submit"
-            disabled={!personId.trim()}
-            color="teal"
-            size="md"
-            mb="md"
-            fullWidth
-          >
-            Search
-          </Button>
-        </Container>
-      </form>
+    <>
+      <Container size="lg">
+        <Title>Relative PR</Title>
+      </Container>
+      <Container size="lg" mt="xl">
+        <form onSubmit={handleFormSubmit}>
+          <Container size="xs" mb="xl" px="0" className={styles.inputContainer}>
+            <TextInput
+              placeholder="e.g. 2009ZEMD01"
+              label="WCA ID"
+              value={personId}
+              onChange={(e) => setPersonId(e.currentTarget.value)}
+              mb="xs"
+              size="md"
+              error={error}
+            />
+            <Button
+              type="submit"
+              disabled={!personId.trim()}
+              color="teal"
+              size="md"
+              mb="md"
+              fullWidth
+            >
+              Search
+            </Button>
+          </Container>
+        </form>
 
-      {(isLoadingSingle || isLoadingAvg) && (
-        <Center mt="md">
-          <Loader color="teal" />
-        </Center>
-      )}
+        {(isLoadingSingle || isLoadingAvg) && (
+          <Center mt="md">
+            <Loader color="teal" />
+          </Center>
+        )}
 
-      {(isErrorSingle || isErrorAvg) && (
-        <Text c="red" mt="md">
-          Failed to fetch data. Please check the ID.
-        </Text>
-      )}
+        {(isErrorSingle || isErrorAvg) && (
+          <Text c="red" mt="md">
+            Failed to fetch data. Please check the ID.
+          </Text>
+        )}
 
-      {!isLoadingSingle &&
-        !isErrorSingle &&
-        singleData &&
-        !isLoadingAvg &&
-        !isErrorAvg &&
-        avgData && (
-          <>
-            <h2>WCA Personal Records</h2>
+        {!isLoadingSingle &&
+          !isErrorSingle &&
+          singleData &&
+          !isLoadingAvg &&
+          !isErrorAvg &&
+          avgData && (
             <PersonalRecordTable
               singleData={singleData}
               avgData={avgData}
@@ -116,30 +119,30 @@ export function PersonalRecordPage() {
               sortDirection={sortDirection}
               onSort={handleSort}
             />
-          </>
-        )}
+          )}
 
-      <Container size="lg" my="xl" p="0">
-        <Text size="sm" mb="xs">
-          Gradient Scale:
-        </Text>
-        <Container
-          size="lg"
-          className={styles.gradientScale}
-          bg={`linear-gradient(to right in hsl, ${calculateTealGradient(
-            0.001
-          )}, ${calculateTealGradient(0.999)})`}
-        />
-        <Text size="xs" mt="xs">
-          Top 0% (White) | Top 100% (Black)
-        </Text>
+        <Container size="lg" my="xl" p="0">
+          <Text size="sm" mb="xs">
+            Gradient Scale:
+          </Text>
+          <Container
+            size="lg"
+            className={styles.gradientScale}
+            bg={`linear-gradient(to right in hsl, ${calculateTealGradient(
+              0.001
+            )}, ${calculateTealGradient(0.999)})`}
+          />
+          <Text size="xs" mt="xs">
+            Top 0% (White) | Top 100% (Black)
+          </Text>
+        </Container>
+        <Container size="lg" my="xl" p="0">
+          <Flex align="center">
+            <IconInfoCircle size={12} />
+            <Text size="xs">&nbsp;Only successful results are considered.</Text>
+          </Flex>
+        </Container>
       </Container>
-      <Container size="lg" my="xl" p="0">
-        <Flex align="center">
-          <IconInfoCircle size={12} />
-          <Text size="xs">&nbsp;Only successful results are considered.</Text>
-        </Flex>
-      </Container>
-    </Container>
+    </>
   );
 }

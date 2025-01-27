@@ -1,4 +1,4 @@
-import { Container, Flex, ScrollArea, Text } from "@mantine/core";
+import { Container, Flex, ScrollArea, Text, Title } from "@mantine/core";
 import PercAvgTable from "../components/tables/PercAvgTable";
 import PercSingleTable from "../components/tables/PercSingleTable";
 import { useFetchMetadata } from "../hooks/useFetchMetadata";
@@ -9,7 +9,10 @@ export function DistributionPage() {
 
   return (
     <>
-      <Container size="lg" ta="right">
+      <Container size="lg">
+        <Title>Distribution</Title>
+      </Container>
+      <Container size="lg" ta="right" mt="xl">
         <Text>
           Last updated:{" "}
           {data ? (

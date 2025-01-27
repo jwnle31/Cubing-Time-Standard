@@ -154,97 +154,102 @@ export function HeadToHeadPage() {
   );
 
   return (
-    <Container size="lg" mt="lg">
-      <Flex direction="column" mb="lg">
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleFormSubmit();
-          }}
-        >
-          <Grid>
-            <Grid.Col visibleFrom="xs" span={3} />
-            <Grid.Col span={{ base: 6, xs: 3 }}>
-              <TextInput
-                label={
-                  <Flex align="center">
-                    <IconCircleFilled
-                      size={16}
-                      className={`${styles.iconCircle} ${styles.color1}`}
-                    />
-                    Person 1 ID
-                  </Flex>
-                }
-                defaultValue={personId1Ref.current}
-                error={error1}
-                onChange={(e) => (personId1Ref.current = e.target.value)}
-                placeholder="e.g. 2009ZEMD01"
+    <>
+      <Container size="lg">
+        <Title>Head to Head</Title>
+      </Container>
+      <Container size="lg" mt="xl">
+        <Flex direction="column" mb="lg">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleFormSubmit();
+            }}
+          >
+            <Grid>
+              <Grid.Col visibleFrom="xs" span={3} />
+              <Grid.Col span={{ base: 6, xs: 3 }}>
+                <TextInput
+                  label={
+                    <Flex align="center">
+                      <IconCircleFilled
+                        size={16}
+                        className={`${styles.iconCircle} ${styles.color1}`}
+                      />
+                      Person 1 ID
+                    </Flex>
+                  }
+                  defaultValue={personId1Ref.current}
+                  error={error1}
+                  onChange={(e) => (personId1Ref.current = e.target.value)}
+                  placeholder="e.g. 2009ZEMD01"
+                />
+              </Grid.Col>
+              <Grid.Col span={{ base: 6, xs: 3 }}>
+                <TextInput
+                  label={
+                    <Flex align="center">
+                      <IconCircleFilled
+                        size={16}
+                        className={`${styles.iconCircle} ${styles.color2}`}
+                      />
+                      Person 2 ID
+                    </Flex>
+                  }
+                  defaultValue={personId2Ref.current}
+                  error={error2}
+                  onChange={(e) => (personId2Ref.current = e.target.value)}
+                  placeholder="e.g. 2007VALK01"
+                />
+              </Grid.Col>
+              <Grid.Col visibleFrom="xs" span={3} />
+
+              <Grid.Col visibleFrom="xs" span={3} />
+              <Grid.Col span={{ base: 12, xs: 6 }}>
+                <Button color="teal" type="submit" fullWidth>
+                  Search
+                </Button>
+              </Grid.Col>
+              <Grid.Col visibleFrom="xs" span={3} />
+            </Grid>
+          </form>
+        </Flex>
+
+        <br />
+        <br />
+
+        {isLoading && (
+          <Center>
+            <Loader color="teal" />
+          </Center>
+        )}
+
+        {isError && (
+          <Center>
+            <Text c="red">Failed to load data.</Text>
+          </Center>
+        )}
+
+        {!isLoading && !isError && h2hData && (
+          <>
+            <Flex justify="center" align="center" mb="lg">
+              <TotalScoreCard
+                totalScore1={totalScore1}
+                totalScore2={totalScore2}
               />
-            </Grid.Col>
-            <Grid.Col span={{ base: 6, xs: 3 }}>
-              <TextInput
-                label={
-                  <Flex align="center">
-                    <IconCircleFilled
-                      size={16}
-                      className={`${styles.iconCircle} ${styles.color2}`}
-                    />
-                    Person 2 ID
-                  </Flex>
-                }
-                defaultValue={personId2Ref.current}
-                error={error2}
-                onChange={(e) => (personId2Ref.current = e.target.value)}
-                placeholder="e.g. 2007VALK01"
+            </Flex>
+
+            <ScrollArea>
+              <EventAccordion
+                eventScores={eventScores}
+                h2hData={h2hData || []}
+                personId1={submittedId1}
+                personId2={submittedId2}
               />
-            </Grid.Col>
-            <Grid.Col visibleFrom="xs" span={3} />
-
-            <Grid.Col visibleFrom="xs" span={3} />
-            <Grid.Col span={{ base: 12, xs: 6 }}>
-              <Button color="teal" type="submit" fullWidth>
-                Search
-              </Button>
-            </Grid.Col>
-            <Grid.Col visibleFrom="xs" span={3} />
-          </Grid>
-        </form>
-      </Flex>
-
-      <br />
-      <br />
-
-      {isLoading && (
-        <Center>
-          <Loader color="teal" />
-        </Center>
-      )}
-
-      {isError && (
-        <Center>
-          <Text c="red">Failed to load data.</Text>
-        </Center>
-      )}
-
-      {!isLoading && !isError && h2hData && (
-        <>
-          <Flex justify="center" align="center" mb="lg">
-            <TotalScoreCard
-              totalScore1={totalScore1}
-              totalScore2={totalScore2}
-            />
-          </Flex>
-
-          <ScrollArea>
-            <EventAccordion
-              eventScores={eventScores}
-              h2hData={h2hData || []}
-              personId1={submittedId1}
-              personId2={submittedId2}
-            />
-          </ScrollArea>
-        </>
-      )}
-    </Container>
+            </ScrollArea>
+          </>
+        )}
+      </Container>
+    </>
   );
 }

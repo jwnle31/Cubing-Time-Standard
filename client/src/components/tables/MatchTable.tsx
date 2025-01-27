@@ -2,6 +2,7 @@ import { Table, Badge, Text, Flex } from "@mantine/core";
 import { IconCircleFilled, IconEqual } from "@tabler/icons-react";
 import styles from "./MatchTable.module.css";
 import type { H2HInfo } from "../../hooks/useFetchHeadToHead";
+import { ROUNDNAMES } from "../../globals/wcaInfo";
 
 interface MatchTableProps {
   matches: H2HInfo[];
@@ -45,7 +46,9 @@ export function MatchTable({ matches, personId1, personId2 }: MatchTableProps) {
                 {match.competitionId}
               </Badge>
             </Table.Td>
-            <Table.Td visibleFrom="sm">{match.roundTypeId}</Table.Td>
+            <Table.Td visibleFrom="sm">
+              {ROUNDNAMES[match.roundTypeId]}
+            </Table.Td>
             <Table.Td visibleFrom="sm" ta="center">
               <Text>{match.pos1}</Text>
             </Table.Td>
