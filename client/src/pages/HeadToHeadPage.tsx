@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import {
   Container,
   Flex,
-  ScrollArea,
   Text,
   Title,
   Card,
@@ -177,7 +176,7 @@ export function HeadToHeadPage() {
   return (
     <Container size="lg">
       <Title>Head to Head</Title>
-      <Container size="lg" mt="xl">
+      <Container size="lg" mt="xl" px="0">
         <Flex direction="column" mb="lg">
           <form onSubmit={handleFormSubmit}>
             <Grid>
@@ -227,6 +226,7 @@ export function HeadToHeadPage() {
             </Grid>
           </form>
         </Flex>
+
         {isLoading ? (
           <Center>
             <Loader color="teal" />
@@ -248,14 +248,12 @@ export function HeadToHeadPage() {
                   totalScore2={totalScore2}
                 />
               </Flex>
-              <ScrollArea>
-                <EventAccordion
-                  eventScores={eventScores}
-                  h2hData={h2hData || []}
-                  personId1={submittedId1}
-                  personId2={submittedId2}
-                />
-              </ScrollArea>
+              <EventAccordion
+                eventScores={eventScores}
+                h2hData={h2hData || []}
+                personId1={submittedId1}
+                personId2={submittedId2}
+              />
             </>
           )
         )}
