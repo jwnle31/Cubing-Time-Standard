@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Container,
   Text,
@@ -15,41 +15,42 @@ import { calculateTealGradient } from "../utils/color";
 import { IconInfoCircle } from "@tabler/icons-react";
 import styles from "./PersonalRecordPage.module.css";
 import { validateWCAId } from "../utils/validate";
+import { useParams, useNavigate } from "react-router-dom";
 
 export function PersonalRecordPage() {
-  const [personId, setPersonId] = useState<string>("");
+  const { personId: initialPersonId } = useParams();
+  const navigate = useNavigate();
+
+  const validationError = initialPersonId
+    ? validateWCAId(initialPersonId)
+    : null;
+
+  const [personId, setPersonId] = useState<string>(initialPersonId || "");
   const [currentPersonId, setCurrentPersonId] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<"single" | "average" | "eventId">(
     "eventId"
   );
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(validationError);
 
   const {
     data: singleData,
     isLoading: isLoadingSingle,
     isError: isErrorSingle,
-    refetch: refetchSingle,
   } = useFetchPr(currentPersonId || "", "single");
 
   const {
     data: avgData,
     isLoading: isLoadingAvg,
     isError: isErrorAvg,
-    refetch: refetchAvg,
   } = useFetchPr(currentPersonId || "", "average");
 
-  const handleSearch = () => {
-    const validationError = validateWCAId(personId);
-    setError(validationError);
-    if (validationError) return;
-    setCurrentPersonId(personId);
-
-    setTimeout(() => {
-      refetchSingle();
-      refetchAvg();
-    }, 0);
-  };
+  useEffect(() => {
+    setPersonId(initialPersonId || "");
+    if (initialPersonId) {
+      setCurrentPersonId(validationError ? null : initialPersonId);
+    }
+  }, [initialPersonId, validationError]);
 
   const handleSort = (column: "single" | "average" | "eventId") => {
     const isSameColumn = sortBy === column;
@@ -61,7 +62,11 @@ export function PersonalRecordPage() {
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    handleSearch();
+    const validationError = validateWCAId(personId);
+    setError(validationError);
+    if (validationError) return;
+    setCurrentPersonId(personId);
+    navigate(`/personal-record/${personId.toUpperCase()}`);
   };
 
   return (
@@ -111,7 +116,8 @@ export function PersonalRecordPage() {
           singleData &&
           !isLoadingAvg &&
           !isErrorAvg &&
-          avgData && (
+          avgData &&
+          initialPersonId && (
             <PersonalRecordTable
               singleData={singleData}
               avgData={avgData}

@@ -15,6 +15,7 @@ const fetchPr = async (personId: string, type: "single" | "average") => {
 };
 
 export const useFetchPr = (personId: string, type: "single" | "average") => {
+  personId = personId.toUpperCase();
   return useQuery<PersonalRecord[], Error>({
     queryKey: [`${personId}-${type}-pr`],
     queryFn: () => fetchPr(personId, type),

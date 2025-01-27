@@ -16,9 +16,10 @@ import cx from "clsx";
 import classes from "./Header.module.css";
 
 const links = [
-  { link: "/", label: "Distribution" },
-  { link: "/personal-record", label: "Relative PR" },
-  { link: "/coming-soon", label: "Coming Soon..." },
+  { link: "/", label: "Distribution", matchType: "exact" },
+  { link: "/personal-record", label: "Relative PR", matchType: "startsWith" },
+  { link: "/head-to-head", label: "Head to Head", matchType: "startsWith" },
+  { link: "/coming-soon", label: "Coming Soon...", matchType: "exact" },
 ];
 
 export function Header() {
@@ -35,7 +36,11 @@ export function Header() {
       key={link.label}
       href={link.link}
       className={classes.link}
-      data-active={active === link.link || undefined}
+      data-active={
+        link.matchType === "startsWith"
+          ? active.startsWith(link.link) || undefined
+          : active === link.link || undefined
+      }
       onClick={() => {
         setActive(link.link);
       }}

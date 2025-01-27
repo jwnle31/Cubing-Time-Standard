@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
   Container,
   Flex,
@@ -12,7 +13,6 @@ import {
   Center,
   Loader,
 } from "@mantine/core";
-import { useState, useRef } from "react";
 import { useFetchH2H } from "../hooks/useFetchHeadToHead";
 import { IconCircleFilled } from "@tabler/icons-react";
 import { EVENTS, EVENTNAMES } from "../globals/wcaInfo";
@@ -21,33 +21,54 @@ import { validateWCAId } from "../utils/validate";
 import clsx from "clsx";
 import styles from "./HeadToHeadPage.module.css";
 import type { H2HInfo } from "../hooks/useFetchHeadToHead";
+import { useParams, useNavigate } from "react-router-dom";
 
 export function HeadToHeadPage() {
-  const personId1Ref = useRef("");
-  const personId2Ref = useRef("");
-  const [submittedId1, setSubmittedId1] = useState("");
-  const [submittedId2, setSubmittedId2] = useState("");
-  const [error1, setError1] = useState<string | null>(null);
-  const [error2, setError2] = useState<string | null>(null);
-  const searchEnabled = Boolean(submittedId1 && submittedId2);
+  const { personId1: urlPersonId1, personId2: urlPersonId2 } = useParams();
+  const navigate = useNavigate();
+
+  const validationError1 = urlPersonId1 ? validateWCAId(urlPersonId1) : null;
+  const validationError2 = urlPersonId2 ? validateWCAId(urlPersonId2) : null;
+
+  const [personId1, setPersonId1] = useState<string>(urlPersonId1 || "");
+  const [personId2, setPersonId2] = useState<string>(urlPersonId2 || "");
+  const [submittedId1, setSubmittedId1] = useState<string | null>(null);
+  const [submittedId2, setSubmittedId2] = useState<string | null>(null);
+  const [error1, setError1] = useState<string | null>(validationError1);
+  const [error2, setError2] = useState<string | null>(validationError2);
 
   const {
     data: h2hData,
     isLoading,
     isError,
-  } = useFetchH2H(submittedId1, submittedId2, searchEnabled);
+  } = useFetchH2H(submittedId1 || "", submittedId2 || "");
 
-  const handleFormSubmit = () => {
-    const error1 = validateWCAId(personId1Ref.current);
-    const error2 = validateWCAId(personId2Ref.current);
+  useEffect(() => {
+    setPersonId1(urlPersonId1 || "");
+    setPersonId2(urlPersonId2 || "");
+    if (urlPersonId1 && urlPersonId2) {
+      setSubmittedId1(validationError1 ? null : urlPersonId1);
+      setSubmittedId2(validationError2 ? null : urlPersonId2);
+    }
+  }, [urlPersonId1, urlPersonId2, validationError1, validationError2]);
 
-    setError1(error1);
-    setError2(error2);
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
 
-    if (error1 || error2) return;
+    const validationError1 = validateWCAId(personId1);
+    const validationError2 = validateWCAId(personId2);
 
-    setSubmittedId1(personId1Ref.current); // Set the submitted IDs after validation
-    setSubmittedId2(personId2Ref.current);
+    setError1(validationError1);
+    setError2(validationError2);
+
+    if (validationError1 || validationError2) return;
+
+    setSubmittedId1(personId1);
+    setSubmittedId2(personId2);
+
+    navigate(
+      `/head-to-head/${personId1.toUpperCase()}/${personId2.toUpperCase()}`
+    );
   };
 
   const computeScores = (matches: H2HInfo[]) => {
@@ -154,18 +175,11 @@ export function HeadToHeadPage() {
   );
 
   return (
-    <>
-      <Container size="lg">
-        <Title>Head to Head</Title>
-      </Container>
+    <Container size="lg">
+      <Title>Head to Head</Title>
       <Container size="lg" mt="xl">
         <Flex direction="column" mb="lg">
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleFormSubmit();
-            }}
-          >
+          <form onSubmit={handleFormSubmit}>
             <Grid>
               <Grid.Col visibleFrom="xs" span={3} />
               <Grid.Col span={{ base: 6, xs: 3 }}>
@@ -179,9 +193,9 @@ export function HeadToHeadPage() {
                       Person 1 ID
                     </Flex>
                   }
-                  defaultValue={personId1Ref.current}
+                  value={personId1}
+                  onChange={(e) => setPersonId1(e.target.value)}
                   error={error1}
-                  onChange={(e) => (personId1Ref.current = e.target.value)}
                   placeholder="e.g. 2009ZEMD01"
                 />
               </Grid.Col>
@@ -196,14 +210,13 @@ export function HeadToHeadPage() {
                       Person 2 ID
                     </Flex>
                   }
-                  defaultValue={personId2Ref.current}
+                  value={personId2}
+                  onChange={(e) => setPersonId2(e.target.value)}
                   error={error2}
-                  onChange={(e) => (personId2Ref.current = e.target.value)}
                   placeholder="e.g. 2007VALK01"
                 />
               </Grid.Col>
               <Grid.Col visibleFrom="xs" span={3} />
-
               <Grid.Col visibleFrom="xs" span={3} />
               <Grid.Col span={{ base: 12, xs: 6 }}>
                 <Button color="teal" type="submit" fullWidth>
@@ -214,42 +227,39 @@ export function HeadToHeadPage() {
             </Grid>
           </form>
         </Flex>
-
-        <br />
-        <br />
-
-        {isLoading && (
+        {isLoading ? (
           <Center>
             <Loader color="teal" />
           </Center>
-        )}
-
-        {isError && (
+        ) : isError ? (
           <Center>
             <Text c="red">Failed to load data.</Text>
           </Center>
-        )}
-
-        {!isLoading && !isError && h2hData && (
-          <>
-            <Flex justify="center" align="center" mb="lg">
-              <TotalScoreCard
-                totalScore1={totalScore1}
-                totalScore2={totalScore2}
-              />
-            </Flex>
-
-            <ScrollArea>
-              <EventAccordion
-                eventScores={eventScores}
-                h2hData={h2hData || []}
-                personId1={submittedId1}
-                personId2={submittedId2}
-              />
-            </ScrollArea>
-          </>
+        ) : (
+          h2hData &&
+          urlPersonId1 &&
+          urlPersonId2 &&
+          submittedId1 &&
+          submittedId2 && (
+            <>
+              <Flex justify="center" align="center" mt="xl" pt="xl" mb="lg">
+                <TotalScoreCard
+                  totalScore1={totalScore1}
+                  totalScore2={totalScore2}
+                />
+              </Flex>
+              <ScrollArea>
+                <EventAccordion
+                  eventScores={eventScores}
+                  h2hData={h2hData || []}
+                  personId1={submittedId1}
+                  personId2={submittedId2}
+                />
+              </ScrollArea>
+            </>
+          )
         )}
       </Container>
-    </>
+    </Container>
   );
 }

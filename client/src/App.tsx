@@ -22,9 +22,15 @@ export default function App() {
           <Layout>
             <Routes>
               <Route path="/" element={<DistributionPage />} />
-              <Route path="/personal-record" element={<PersonalRecordPage />} />
+              <Route
+                path="/personal-record/:personId?"
+                element={<PersonalRecordPage />}
+              />
               <Route path="/coming-soon" element={<ComingSoonPage />} />
-              <Route path="head-to-head" element={<HeadToHeadPage />} />
+              <Route
+                path="/head-to-head/:personId1?/:personId2?"
+                element={<HeadToHeadPage />}
+              />
             </Routes>
           </Layout>
         </BrowserRouter>
