@@ -105,6 +105,15 @@ export const RelativeRecordTable = ({
             })}
             c={singleTextColor}
             bg={singleBgColor}
+            style={{
+              borderTop: !isFirstRow(rowIndex)
+                ? `2px solid ${singleBgColor}`
+                : undefined,
+              borderBottom: !isLastRow(rowIndex)
+                ? `2px solid ${singleBgColor}`
+                : undefined,
+              borderRight: `2px solid ${singleBgColor}`,
+            }}
           >
             {singleRr !== null ? `${singleRr.toFixed(2)}%` : "N/A"}
           </Table.Td>
@@ -117,7 +126,15 @@ export const RelativeRecordTable = ({
             })}
             c={avgTextColor}
             bg={avgBgColor}
-            bd={avgBgColor}
+            style={{
+              borderTop: !isFirstRow(rowIndex)
+                ? `2px solid ${avgBgColor}`
+                : undefined,
+              borderBottom: !isLastRow(rowIndex)
+                ? `2px solid ${avgBgColor}`
+                : undefined,
+              borderLeft: `2px solid ${avgBgColor}`,
+            }}
           >
             {avgRr !== null ? `${avgRr.toFixed(2)}%` : "N/A"}
           </Table.Td>
