@@ -12,7 +12,7 @@ import {
   Center,
   Loader,
 } from "@mantine/core";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useFetchH2H } from "../hooks/useFetchHeadToHead";
 import { IconCircleFilled } from "@tabler/icons-react";
 import { EVENTS, EVENTNAMES } from "../globals/wcaInfo";
@@ -23,10 +23,10 @@ import styles from "./HeadToHeadPage.module.css";
 import type { H2HInfo } from "../hooks/useFetchHeadToHead";
 
 export function HeadToHeadPage() {
-  const [personId1, setPersonId1] = useState("");
-  const [personId2, setPersonId2] = useState("");
-  const [submittedId1, setSubmittedId1] = useState(personId1);
-  const [submittedId2, setSubmittedId2] = useState(personId2);
+  const personId1Ref = useRef("");
+  const personId2Ref = useRef("");
+  const [submittedId1, setSubmittedId1] = useState("");
+  const [submittedId2, setSubmittedId2] = useState("");
   const [error1, setError1] = useState<string | null>(null);
   const [error2, setError2] = useState<string | null>(null);
   const searchEnabled = Boolean(submittedId1 && submittedId2);
@@ -38,16 +38,16 @@ export function HeadToHeadPage() {
   } = useFetchH2H(submittedId1, submittedId2, searchEnabled);
 
   const handleFormSubmit = () => {
-    const error1 = validateWCAId(personId1);
-    const error2 = validateWCAId(personId2);
+    const error1 = validateWCAId(personId1Ref.current);
+    const error2 = validateWCAId(personId2Ref.current);
 
     setError1(error1);
     setError2(error2);
 
     if (error1 || error2) return;
 
-    setSubmittedId1(personId1);
-    setSubmittedId2(personId2);
+    setSubmittedId1(personId1Ref.current); // Set the submitted IDs after validation
+    setSubmittedId2(personId2Ref.current);
   };
 
   const computeScores = (matches: H2HInfo[]) => {
@@ -175,9 +175,9 @@ export function HeadToHeadPage() {
                     Person 1 ID
                   </Flex>
                 }
-                value={personId1}
+                defaultValue={personId1Ref.current}
                 error={error1}
-                onChange={(e) => setPersonId1(e.target.value)}
+                onChange={(e) => (personId1Ref.current = e.target.value)}
                 placeholder="e.g. 2009ZEMD01"
               />
             </Grid.Col>
@@ -192,9 +192,9 @@ export function HeadToHeadPage() {
                     Person 2 ID
                   </Flex>
                 }
-                value={personId2}
+                defaultValue={personId2Ref.current}
                 error={error2}
-                onChange={(e) => setPersonId2(e.target.value)}
+                onChange={(e) => (personId2Ref.current = e.target.value)}
                 placeholder="e.g. 2007VALK01"
               />
             </Grid.Col>
@@ -239,8 +239,8 @@ export function HeadToHeadPage() {
             <EventAccordion
               eventScores={eventScores}
               h2hData={h2hData || []}
-              personId1={personId1}
-              personId2={personId2}
+              personId1={submittedId1}
+              personId2={submittedId2}
             />
           </ScrollArea>
         </>
