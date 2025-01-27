@@ -20,29 +20,22 @@ import { MatchTable } from "../components/tables/MatchTable";
 import { validateWCAId } from "../utils/validate";
 import clsx from "clsx";
 import styles from "./HeadToHeadPage.module.css";
-
-export interface H2HInfo {
-  competitionId: string;
-  eventId: string;
-  roundTypeId: string;
-  pos1: number;
-  pos2: number;
-  winner: number;
-}
+import type { H2HInfo } from "../hooks/useFetchHeadToHead";
 
 export function HeadToHeadPage() {
-  const [personId1, setPersonId1] = useState("2009zemd01"); // Default ID
-  const [personId2, setPersonId2] = useState("2007valk01"); // Default ID
+  const [personId1, setPersonId1] = useState("");
+  const [personId2, setPersonId2] = useState("");
   const [submittedId1, setSubmittedId1] = useState(personId1);
   const [submittedId2, setSubmittedId2] = useState(personId2);
   const [error1, setError1] = useState<string | null>(null);
   const [error2, setError2] = useState<string | null>(null);
+  const searchEnabled = Boolean(submittedId1 && submittedId2);
 
   const {
     data: h2hData,
     isLoading,
     isError,
-  } = useFetchH2H(submittedId1, submittedId2);
+  } = useFetchH2H(submittedId1, submittedId2, searchEnabled);
 
   const handleFormSubmit = () => {
     const error1 = validateWCAId(personId1);
@@ -221,15 +214,19 @@ export function HeadToHeadPage() {
       <br />
       <br />
 
-      {isLoading ? (
+      {isLoading && (
         <Center>
           <Loader color="teal" />
         </Center>
-      ) : isError ? (
+      )}
+
+      {isError && (
         <Center>
           <Text c="red">Failed to load data.</Text>
         </Center>
-      ) : (
+      )}
+
+      {!isLoading && !isError && h2hData && (
         <>
           <Flex justify="center" align="center" mb="lg">
             <TotalScoreCard

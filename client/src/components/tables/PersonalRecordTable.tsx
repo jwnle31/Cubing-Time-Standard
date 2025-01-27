@@ -3,11 +3,7 @@ import { EVENTS, EVENTNAMES } from "../../globals/wcaInfo";
 import { calculateTealGradient, getTextColor } from "../../utils/color";
 import clsx from "clsx";
 import styles from "./PersonalRecordTable.module.css";
-
-interface PersonalRecord {
-  eventId: string;
-  pr: number;
-}
+import type { PersonalRecord } from "../../hooks/useFetchPersonalRecord";
 
 interface PersonalRecordTableProps {
   singleData: PersonalRecord[] | null;

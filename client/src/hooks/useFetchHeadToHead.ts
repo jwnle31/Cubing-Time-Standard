@@ -18,9 +18,14 @@ const fetchH2H = async (personId1: string, personId2: string) => {
   return response.data;
 };
 
-export const useFetchH2H = (personId1: string, personId2: string) => {
+export const useFetchH2H = (
+  personId1: string,
+  personId2: string,
+  enabled: boolean
+) => {
   return useQuery<H2HInfo[], Error>({
     queryKey: [`${personId1}-${personId2}-h2h`],
     queryFn: () => fetchH2H(personId1, personId2),
+    enabled,
   });
 };

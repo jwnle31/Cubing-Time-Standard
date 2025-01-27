@@ -1,15 +1,7 @@
 import { Table, Badge, Text, Flex } from "@mantine/core";
 import { IconCircleFilled, IconEqual } from "@tabler/icons-react";
 import styles from "./MatchTable.module.css";
-
-export interface H2HInfo {
-  competitionId: string;
-  eventId: string;
-  roundTypeId: string;
-  pos1: number;
-  pos2: number;
-  winner: number;
-}
+import type { H2HInfo } from "../../hooks/useFetchHeadToHead";
 
 interface MatchTableProps {
   matches: H2HInfo[];
