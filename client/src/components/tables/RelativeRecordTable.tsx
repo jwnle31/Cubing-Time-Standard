@@ -148,21 +148,21 @@ export const RelativeRecordTable = ({
       <Table.Thead>
         <Table.Tr>
           <Table.Th
-            className={styles.eventColumn}
+            className={`${styles.eventColumn} ${styles.wthcTransparent}`}
             onClick={() => onSort("eventId")}
           >
             Event
             {sortBy === "eventId" && (sortDirection === "asc" ? " ↑" : " ↓")}
           </Table.Th>
           <Table.Th
-            className={styles.singleColumn}
+            className={`${styles.singleColumn} ${styles.wthcTransparent}`}
             onClick={() => onSort("single")}
           >
             Single
             {sortBy === "single" && (sortDirection === "asc" ? " ↑" : " ↓")}
           </Table.Th>
           <Table.Th
-            className={styles.averageColumn}
+            className={`${styles.averageColumn} ${styles.wthcTransparent}`}
             onClick={() => onSort("average")}
           >
             Average

@@ -1,4 +1,4 @@
-import connection from "../db"; // Import the pool
+import connection from "../db";
 import {
   ArInternalMetadata,
   Rank,
@@ -29,7 +29,7 @@ class StatRepository implements IStatRepository {
       const [rows] = await connection.execute<ArInternalMetadata[]>(query);
       return rows;
     } catch (err) {
-      throw err; // Handle error accordingly
+      throw err;
     }
   }
 

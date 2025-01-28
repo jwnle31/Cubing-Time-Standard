@@ -1,3 +1,4 @@
+import pool from "../db";
 import mysql from "mysql2/promise";
 import axios from "axios";
 import unzipper from "unzipper";
@@ -36,7 +37,7 @@ if (
 }
 
 export async function populateDatabase(): Promise<void> {
-  let connection: mysql.Connection | null = null;
+  let connection: mysql.PoolConnection | null = null;
 
   try {
     // Download the latest export
@@ -87,16 +88,7 @@ export async function populateDatabase(): Promise<void> {
 
     console.log("Cleanup complete. Only WCA_export.sql remains.");
 
-    const connectionOptions: any = {
-      host: DB_HOST,
-      user: DB_USERNAME,
-      password: DB_PASSWORD,
-      port: Number(DB_PORT),
-      database: DB_NAME,
-      charset: "utf8mb4_unicode_ci",
-    };
-
-    connection = await mysql.createConnection(connectionOptions);
+    connection = await pool.getConnection();
 
     await connection.query("SET SESSION sql_require_primary_key = 0;");
 
@@ -158,7 +150,7 @@ export async function populateDatabase(): Promise<void> {
   } finally {
     if (connection) {
       console.log("Closing connection...");
-      await connection.end();
+      connection.release();
     }
 
     const sqlFilePath = path.resolve(
