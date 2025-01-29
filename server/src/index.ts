@@ -1,4 +1,4 @@
-import express, { Application } from "express";
+import express, { Application, Request, Response, NextFunction } from "express";
 import cors, { CorsOptions } from "cors";
 import rateLimit from "express-rate-limit";
 import Routes from "./routes";
@@ -22,10 +22,8 @@ export default class Server {
     //     message: "Too many request from this IP",
     //   })
     // );
-    app.use((req, res, next) => {
-      res.set("Cache-Control", "public, max-age=86400"); // Cache for 1 day
-      next();
-    });
+    app.use(this.cacheResponseIfSuccess);
+
     const corsOptions: CorsOptions = {
       origin: process.env.ORIGIN,
     };
@@ -34,6 +32,23 @@ export default class Server {
     app.use(express.urlencoded({ extended: true }));
 
     this.initializeCronJobs();
+  }
+
+  private cacheResponseIfSuccess(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): void {
+    const originalSend = res.send;
+
+    res.send = (body: any): Response => {
+      if (res.statusCode >= 200 && res.statusCode < 300) {
+        res.set("Cache-Control", "public, max-age=86400");
+      }
+      return originalSend.call(res, body);
+    };
+
+    next();
   }
 
   private initializeCronJobs(): void {
