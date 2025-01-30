@@ -48,61 +48,46 @@ export async function populateDatabase(): Promise<void> {
       url: EXPORT_URL,
       responseType: "stream",
     });
-
     const export_folder = path.resolve(__dirname, EXPORT_FOLDER + "");
     const export_zip = path.resolve(
       __dirname,
       EXPORT_FOLDER + "WCA_export.zip"
     );
-
     fs.ensureDirSync(export_folder);
-
     console.log(export_zip);
     const writer = fs.createWriteStream(export_zip);
     response.data.pipe(writer);
-
     await new Promise((resolve, reject) => {
       writer.on("finish", resolve);
       writer.on("error", reject);
     });
-
     console.log("Download complete.");
     console.log(`Extracting ${export_zip}...`);
-
     await fs
       .createReadStream(export_zip)
       .pipe(unzipper.Extract({ path: export_folder }))
       .promise();
-
     console.log("Extraction complete. Deleting ZIP file.");
     fs.unlinkSync(export_zip);
-
     console.log("Cleaning up unnecessary files...");
     const files = await fs.readdir(export_folder);
-
     for (const file of files) {
       if (file !== "WCA_export.sql") {
         console.log(`Removing file: ${file}`);
         await fs.unlink(path.join(export_folder, file));
       }
     }
-
     console.log("Cleanup complete. Only WCA_export.sql remains.");
-
     connection = await pool.getConnection();
-
     await connection.query("SET SESSION sql_require_primary_key = 0;");
     await connection.query("SET SQL_SAFE_UPDATES = 0;");
-
     console.log("Starting transaction...");
     await connection.query("START TRANSACTION;");
-
     // Execute the SQL file line by line
     await executeSqlFile(
       connection,
       path.resolve(__dirname, EXPORT_FOLDER + "WCA_export.sql")
     );
-
     console.log("Committing transaction...");
     await connection.query("COMMIT;");
     console.log("Database populated successfully.");
@@ -112,7 +97,6 @@ export async function populateDatabase(): Promise<void> {
       console.log("Rolling back transaction due to error...");
       await connection.query("ROLLBACK;"); // Rollback in case of error
     }
-    process.exit(1);
   } finally {
     if (connection) {
       console.log("Closing connection...");
@@ -131,8 +115,6 @@ export async function populateDatabase(): Promise<void> {
     } catch (error: unknown) {
       console.error("Error deleting WCA_export.sql:", error);
     }
-
-    process.exit(0);
   }
 }
 
