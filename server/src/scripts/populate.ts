@@ -7,6 +7,7 @@ import path from "path";
 import dotenv from "dotenv";
 import { createReadStream } from "fs";
 import { createInterface } from "readline";
+import { TABLE_WHITELIST } from "../globals/appInfo";
 
 dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 
@@ -91,6 +92,7 @@ export async function populateDatabase(): Promise<void> {
     connection = await pool.getConnection();
 
     await connection.query("SET SESSION sql_require_primary_key = 0;");
+    await connection.query("SET SQL_SAFE_UPDATES = 0;");
 
     console.log("Starting transaction...");
     await connection.query("START TRANSACTION;");
@@ -99,43 +101,6 @@ export async function populateDatabase(): Promise<void> {
     await executeSqlFile(
       connection,
       path.resolve(__dirname, EXPORT_FOLDER + "WCA_export.sql")
-    );
-
-    await connection.query("SET SQL_SAFE_UPDATES = 0;");
-    await connection.query(
-      "ALTER TABLE RanksSingle ADD COLUMN pr DECIMAL(7, 6);"
-    );
-    await connection.query(`
-      UPDATE RanksSingle r
-      JOIN (
-        SELECT 
-          personId,
-          eventId,
-          PERCENT_RANK() OVER (PARTITION BY eventId ORDER BY best ASC) AS calculated_percent_rank
-        FROM RanksSingle
-      ) er ON r.eventId = er.eventId AND r.personId = er.personId
-      SET r.pr = er.calculated_percent_rank;
-    `);
-    await connection.query("ALTER TABLE RanksAverage ADD COLUMN pr FLOAT;");
-    await connection.query(`
-      UPDATE RanksAverage r
-      JOIN (
-        SELECT 
-          personId,
-          eventId,
-          PERCENT_RANK() OVER (PARTITION BY eventId ORDER BY best ASC) AS calculated_percent_rank
-        FROM RanksAverage
-      ) er ON r.eventId = er.eventId AND r.personId = er.personId
-      SET r.pr = er.calculated_percent_rank;
-    `);
-    await connection.query(
-      "CREATE INDEX idx_results_event_person_comp_round ON defaultdb.Results (eventId, personId, competitionId, roundTypeId, pos);"
-    );
-    await connection.query(
-      "CREATE INDEX idx_results_comp_event_round_person ON defaultdb.Results (competitionId, eventId, roundTypeId, personId);"
-    );
-    await connection.query(
-      "CREATE INDEX idx_personId ON defaultdb.Results (personId);"
     );
 
     console.log("Committing transaction...");
@@ -147,6 +112,7 @@ export async function populateDatabase(): Promise<void> {
       console.log("Rolling back transaction due to error...");
       await connection.query("ROLLBACK;"); // Rollback in case of error
     }
+    process.exit(1);
   } finally {
     if (connection) {
       console.log("Closing connection...");
@@ -165,6 +131,8 @@ export async function populateDatabase(): Promise<void> {
     } catch (error: unknown) {
       console.error("Error deleting WCA_export.sql:", error);
     }
+
+    process.exit(0);
   }
 }
 
@@ -180,6 +148,7 @@ async function executeSqlFile(
 
   let sqlQuery = "";
   let lineNumber = 0;
+  let curTable = "";
 
   for await (const line of rl) {
     lineNumber++;
@@ -194,34 +163,131 @@ async function executeSqlFile(
       continue;
     }
 
-    // Append the line to the current SQL query
-    sqlQuery += trimmedLine + " ";
+    if (
+      trimmedLine.startsWith("DROP TABLE IF EXISTS") ||
+      TABLE_WHITELIST.includes(curTable)
+    ) {
+      // Append the line to the current SQL query
+      sqlQuery += trimmedLine + " ";
+    }
 
     // If the query ends with a semicolon, execute it
     if (sqlQuery.trim().endsWith(";")) {
-      try {
-        await connection.query(sqlQuery.trim());
-        console.log(`Executed query ending at line ${lineNumber}`);
-      } catch (error) {
-        if (error instanceof Error) {
-          console.error("Error executing SQL:", error.message);
-          throw error; // Re-throw error to trigger rollback
+      if (sqlQuery.trim().startsWith("DROP TABLE IF EXISTS")) {
+        if (curTable && TABLE_WHITELIST.includes(curTable)) {
+          await executeAdditionalQueries(connection, curTable);
+          console.log(`DROP TABLE IF EXISTS \`${curTable}\`;`);
+          await connection.query(`DROP TABLE IF EXISTS \`${curTable}\`;`);
+          console.log(`RENAME TABLE \`${curTable}_new\` TO \`${curTable}\`;`);
+          await connection.query(
+            `RENAME TABLE \`${curTable}_new\` TO \`${curTable}\`;`
+          );
+        }
+        const regex = /`([^`]+)`/;
+        const match = sqlQuery.match(regex);
+        if (match) {
+          curTable = match[1];
+        }
+      } else if (sqlQuery.trim().startsWith("CREATE TABLE")) {
+        const regex = /`([^`]+)`/;
+        console.log(sqlQuery.replace(regex, `\`${curTable}_new\``));
+        await connection.query(sqlQuery.replace(regex, `\`${curTable}_new\``));
+      } else if (sqlQuery.trim().startsWith("LOCK TABLES")) {
+        console.log(`LOCK TABLES \`${curTable}_new\` WRITE;`);
+        await connection.query(`LOCK TABLES \`${curTable}_new\` WRITE;`);
+      } else if (sqlQuery.trim().startsWith("INSERT INTO")) {
+        const regex = /`([^`]+)`/;
+        // console.log("INSERTED :3");
+        await connection.query(sqlQuery.replace(regex, `\`${curTable}_new\``));
+      } else {
+        try {
+          await connection.query(sqlQuery.trim());
+        } catch (error) {
+          if (error instanceof Error) {
+            console.error(sqlQuery);
+            console.error("Error executing SQL:", error.message);
+            throw error;
+          }
         }
       }
+      // console.log(`Executed query ending at line ${lineNumber}`);
 
       sqlQuery = "";
     }
   }
 
-  if (sqlQuery.trim()) {
-    try {
-      console.log("Executing final SQL query:", sqlQuery.trim());
-      await connection.query(sqlQuery.trim());
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error("Error executing final SQL:", error.message);
-        throw error;
-      }
+  try {
+    console.log("Executing final SQL query:", sqlQuery.trim());
+    if (curTable && TABLE_WHITELIST.includes(curTable)) {
+      await executeAdditionalQueries(connection, curTable);
+      console.log(`DROP TABLE IF EXISTS \`${curTable}\`;`);
+      await connection.query(`DROP TABLE IF EXISTS \`${curTable}\`;`);
+      console.log(`RENAME TABLE \`${curTable}_new\` TO \`${curTable}\`;`);
+      await connection.query(
+        `RENAME TABLE \`${curTable}_new\` TO \`${curTable}\`;`
+      );
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Error executing final SQL:", error.message);
+      throw error;
+    }
+  }
+}
+
+async function executeAdditionalQueries(
+  connection: mysql.Connection,
+  curTable: string
+) {
+  try {
+    if (curTable === "RanksSingle") {
+      await connection.query(
+        `ALTER TABLE ${curTable}_new ADD COLUMN pr DECIMAL(7, 6);`
+      );
+      await connection.query(`
+        UPDATE ${curTable}_new r
+        JOIN (
+          SELECT 
+            personId,
+            eventId,
+            PERCENT_RANK() OVER (PARTITION BY eventId ORDER BY best ASC) AS calculated_percent_rank
+          FROM ${curTable}_new
+        ) er ON r.eventId = er.eventId AND r.personId = er.personId
+        SET r.pr = er.calculated_percent_rank;
+      `);
+    } else if (curTable === "RanksAverage") {
+      await connection.query(
+        `ALTER TABLE ${curTable}_new ADD COLUMN pr FLOAT;`
+      );
+      await connection.query(`
+        UPDATE ${curTable}_new r
+        JOIN (
+          SELECT 
+            personId,
+            eventId,
+            PERCENT_RANK() OVER (PARTITION BY eventId ORDER BY best ASC) AS calculated_percent_rank
+          FROM ${curTable}_new
+        ) er ON r.eventId = er.eventId AND r.personId = er.personId
+        SET r.pr = er.calculated_percent_rank;
+      `);
+    } else if (curTable === "Results") {
+      await connection.query(
+        `CREATE INDEX idx_results_event_person_comp_round ON defaultdb.${curTable}_new (eventId, personId, competitionId, roundTypeId, pos);`
+      );
+      await connection.query(
+        `CREATE INDEX idx_results_comp_event_round_person ON defaultdb.${curTable}_new (competitionId, eventId, roundTypeId, personId);`
+      );
+      await connection.query(
+        `CREATE INDEX idx_personId ON defaultdb.${curTable}_new (personId);`
+      );
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(
+        `Error executing additional queries for ${curTable}:`,
+        error.message
+      );
+      throw error;
     }
   }
 }
