@@ -1,5 +1,10 @@
 import connection from "../db";
-import { ArInternalMetadata, Rank } from "../models/stat.model";
+import {
+  ArInternalMetadata,
+  Rank,
+  RelativeRecord,
+  H2HInfo,
+} from "../models/stat.model";
 
 interface IStatRepository {
   getMetadata(): Promise<ArInternalMetadata[]>;
@@ -7,23 +12,28 @@ interface IStatRepository {
     eventId: string;
     percents?: number[];
   }): Promise<Rank[]>;
+  getRr(searchParams: {
+    personId: string;
+    type: string;
+  }): Promise<RelativeRecord[]>;
+  getH2H(searchParams: {
+    personId1: string;
+    personId2: string;
+  }): Promise<H2HInfo[]>;
 }
 
 class StatRepository implements IStatRepository {
-  getMetadata(): Promise<ArInternalMetadata[]> {
-    const query = `
-      SELECT * 
-      FROM ar_internal_metadata;
-    `;
-    return new Promise((resolve, reject) => {
-      connection.query<ArInternalMetadata[]>(query, (err, res) => {
-        if (err) reject(err);
-        else resolve(res);
-      });
-    });
+  async getMetadata(): Promise<ArInternalMetadata[]> {
+    const query = `SELECT * FROM ar_internal_metadata;`;
+    try {
+      const [rows] = await connection.execute<ArInternalMetadata[]>(query);
+      return rows;
+    } catch (err) {
+      throw err;
+    }
   }
 
-  getDistribution(searchParams: {
+  async getDistribution(searchParams: {
     eventId: string;
     percents: number[];
     type: string;
@@ -35,30 +45,76 @@ class StatRepository implements IStatRepository {
       .join("\n");
 
     const query = `
-      WITH Ranked AS (
-        SELECT 
-          best,
-          PERCENT_RANK() OVER (ORDER BY best) AS pr
-        FROM ${tableName}
-        WHERE eventId = '${searchParams.eventId}'
-      )
-      SELECT 
-        CASE 
+      SELECT
+        CASE
           ${percents}
         END AS top,
         MAX(best) AS best
-      FROM Ranked
-      WHERE pr <= ${(Math.max(...searchParams.percents) * 0.01).toFixed(2)}
+      FROM ${tableName}
+      WHERE eventId = '${searchParams.eventId}' AND pr <= ${(
+      Math.max(...searchParams.percents) * 0.01
+    ).toFixed(2)}
       GROUP BY top
       ORDER BY top;
-    ;`;
+    `;
 
-    return new Promise((resolve, reject) => {
-      connection.query<Rank[]>(query, (err, res) => {
-        if (err) reject(err);
-        else resolve(res);
-      });
-    });
+    try {
+      const [rows] = await connection.execute<Rank[]>(query);
+      return rows;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async getRr(searchParams: {
+    personId: string;
+    type: string;
+  }): Promise<RelativeRecord[]> {
+    const tableName =
+      searchParams.type === "single" ? "RanksSingle" : "RanksAverage";
+
+    const query = `SELECT eventId, pr FROM ${tableName} WHERE personId = '${searchParams.personId}';`;
+
+    try {
+      const [rows] = await connection.execute<RelativeRecord[]>(query);
+      return rows.map((entry) => ({
+        ...entry,
+        pr: Number(entry.pr),
+      }));
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async getH2H(searchParams: {
+    personId1: string;
+    personId2: string;
+  }): Promise<H2HInfo[]> {
+    const query = `
+      SELECT 
+        r1.competitionId,
+        r1.eventId,
+        r1.roundTypeId,
+        r1.pos AS pos1,
+        r2.pos AS pos2,
+        CASE
+            WHEN r1.pos < r2.pos THEN 1
+            WHEN r2.pos < r1.pos THEN 2
+            ELSE 0
+        END AS winner
+      FROM (SELECT * FROM Results WHERE personId = '${searchParams.personId1}') r1
+      JOIN (SELECT * FROM Results WHERE personId = '${searchParams.personId2}') r2
+          ON r1.competitionId = r2.competitionId
+          AND r1.eventId = r2.eventId
+          AND r1.roundTypeId = r2.roundTypeId;
+    `;
+
+    try {
+      const [rows] = await connection.execute<H2HInfo[]>(query);
+      return rows;
+    } catch (err) {
+      throw err;
+    }
   }
 }
 

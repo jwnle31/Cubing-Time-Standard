@@ -1,0 +1,12 @@
+{
+    local_certs
+}
+
+cts.localhost {
+    encode gzip
+    reverse_proxy client:5173
+}
+
+api.cts.localhost {
+    reverse_proxy api:8080
+}

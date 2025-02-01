@@ -7,6 +7,15 @@ body {
   display: flex;
   flex-direction: column;
   height: 100%;
+
+  --bg-match-1: rgba(0, 212, 255, 0.05);
+  --color-match-1: #00d4ff;
+
+  --bg-match-2: rgba(212, 224, 47, 0.05);
+  --color-match-2: #d4e822;
+
+  --bg-match-tie: rgba(192, 192, 192, 0.05);
+  --color-match-tie: gray;
 }
 
 main {

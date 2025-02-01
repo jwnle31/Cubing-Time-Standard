@@ -3,9 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon -e ts --exec ts-node server.ts --watch src",
-    "build-dev": "tsc && cp .env build/",
-    "build": "tsc",
+    "dev": "nodemon -e ts --exec ts-node server.ts --legacy-watch src",
+    "build": "rimraf build && tsc",
     "start": "node build/server.js",
     "prod": "npm run build && npm run start"
   },
@@ -20,7 +19,8 @@
     "@types/node": "^22.10.2",
     "@types/node-cron": "^3.0.11",
     "@types/unzipper": "^0.10.10",
-    "nodemon": "^3.1.7",
+    "nodemon": "^3.1.9",
+    "rimraf": "^6.0.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.2"
   },

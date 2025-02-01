@@ -20,7 +20,7 @@ const fetchDistribution = async (
 export const useFetchDistribution = (type: "single" | "average") => {
   return useQueries({
     queries: EVENTS.map((eventId) => ({
-      queryKey: [`${type}Distribution`, eventId],
+      queryKey: [`${type}-distribution`, eventId],
       queryFn: () => fetchDistribution(eventId, type),
     })),
   });

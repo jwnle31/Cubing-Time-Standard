@@ -9,6 +9,7 @@ export default class StatsController {
     } catch (err) {
       res.status(500).json({
         message: "Internal Server Error!",
+        err,
       });
     }
   }
@@ -36,6 +37,39 @@ export default class StatsController {
     } catch (err) {
       res.status(500).json({
         message: "Internal Server Error!",
+        err,
+      });
+    }
+  }
+
+  async getRr(req: Request, res: Response) {
+    try {
+      const { personId, type } = req.params;
+      if (type !== "single" && type !== "average") {
+        res.status(400).json({
+          message: "Type has to be single or average.",
+        });
+        return;
+      }
+      const rr = await statRepository.getRr({ personId, type });
+      res.status(200).send(rr);
+    } catch (err) {
+      res.status(500).json({
+        message: "Internal Server Error!",
+        err,
+      });
+    }
+  }
+
+  async getH2H(req: Request, res: Response) {
+    try {
+      const { personId1, personId2 } = req.params;
+      const h2h = await statRepository.getH2H({ personId1, personId2 });
+      res.status(200).send(h2h);
+    } catch (err) {
+      res.status(500).json({
+        message: "Internal Server Error!",
+        err,
       });
     }
   }

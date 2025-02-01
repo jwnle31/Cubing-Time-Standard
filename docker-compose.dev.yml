@@ -1,0 +1,57 @@
+name: cubing-time-standard
+
+services:
+  api:
+    build:
+      context: ./server
+      target: development
+    restart: unless-stopped
+    environment:
+      - TZ=America/New_York
+    env_file: ./server/.env
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    networks:
+      - cubing-time-standard
+
+  client:
+    build:
+      context: ./client
+      target: development
+      args:
+        VITE_API_URL: https://api.cts.localhost
+    environment:
+      CHOKIDAR_USEPOLLING: "true"
+    restart: unless-stopped
+    env_file: ./client/.env
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    networks:
+      - cubing-time-standard
+    command: npm run dev
+    depends_on:
+      - api
+
+  caddy:
+    image: caddy:2-alpine
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./caddy/Caddyfile.dev:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - cubing-time-standard
+    depends_on:
+      - api
+      - client
+
+volumes:
+  caddy_data:
+  caddy_config:
+networks:
+  cubing-time-standard:
+    driver: bridge
