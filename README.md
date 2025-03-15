@@ -20,42 +20,42 @@ This project was inspired by the annual posts on cubing time standards from Redd
 Before proceeding with the steps below, ensure that Node.js is installed and a MySQL database is set up locally.
 
 1. Clone the project.
-  ```bash
-  git clone https://github.com/jwnle31/Cubing-Time-Standard.git
-  ```
+    ```bash
+    git clone https://github.com/jwnle31/Cubing-Time-Standard.git
+    ```
 2. Navigate to the server directory and install the dependencies. Then, create a .env file and use the sample.env file as a reference.
-  ```bash
-  cd Cubing-Time-Standard/server
-  npm install
-
-  cp sample.env .env
-  # open .env and add your variables
-  ```
+    ```bash
+    cd Cubing-Time-Standard/server
+    npm install
+  
+    cp sample.env .env
+    # open .env and add your variables
+    ```
 3. Navigate to the client directory and do the same.
-  ```bash
-  cd ../client
-  npm install
-
-  cp sample.env .env
-  # open .env and add your variables
-  ```
+    ```bash
+    cd ../client
+    npm install
+  
+    cp sample.env .env
+    # open .env and add your variables
+    ```
 3. Navigate to the root directory. Then, create a .env file and use the sample.env file as a reference.
-  ```bash
-  cd ..
-
-  cp sample.env .env
-  # open .env and add your variables
-  ```
+    ```bash
+    cd ..
+  
+    cp sample.env .env
+    # open .env and add your variables
+    ```
 4. Spin up the containers.
-  ```bash
-  docker compose up
-  ```
+    ```bash
+    docker compose up
+    ```
 5. Update your host file to point cts.localhost and api.cts.localhost to 127.0.0.1.
-  ```bash
-  # add these 2 lines
-  127.0.0.1 cts.localhost
-  127.0.0.1 api.cts.localhost
-  ```
+    ```bash
+    # add these 2 lines
+    127.0.0.1 cts.localhost
+    127.0.0.1 api.cts.localhost
+    ```
 6. Add the root.crt file from the Local Caddy Authority to your trust store (so your browser will trust the self-signed TLS certificate). When the containers are running, open the caddy container in Docker desktop, and navigate to the container's file browser. Find the root.crt under the path: /data/caddy/pki/authorities/local/root.crt. Download this file to your desktop, import it into your trust store, then manually trust this certificate. You may need to restart your browser for the changes to take effect.
 
 ## Build commands
