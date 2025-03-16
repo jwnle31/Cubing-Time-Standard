@@ -11,6 +11,7 @@ import {
   Grid,
   Center,
   Loader,
+  List,
 } from "@mantine/core";
 import { useFetchH2H } from "../hooks/useFetchHeadToHead";
 import { IconCircleFilled } from "@tabler/icons-react";
@@ -174,90 +175,108 @@ export function HeadToHeadPage() {
   );
 
   return (
-    <Container size="lg">
-      <Title>Head to Head</Title>
-      <Container size="lg" mt="xl" px="0">
-        <Flex direction="column" mb="lg">
-          <form onSubmit={handleFormSubmit}>
-            <Grid>
-              <Grid.Col visibleFrom="xs" span={3} />
-              <Grid.Col span={{ base: 6, xs: 3 }}>
-                <TextInput
-                  label={
-                    <Flex align="center">
-                      <IconCircleFilled
-                        size={16}
-                        className={`${styles.iconCircle} ${styles.color1}`}
-                      />
-                      Person 1 ID
-                    </Flex>
-                  }
-                  value={personId1}
-                  onChange={(e) => setPersonId1(e.target.value)}
-                  error={error1}
-                  placeholder="e.g. 2009ZEMD01"
-                />
-              </Grid.Col>
-              <Grid.Col span={{ base: 6, xs: 3 }}>
-                <TextInput
-                  label={
-                    <Flex align="center">
-                      <IconCircleFilled
-                        size={16}
-                        className={`${styles.iconCircle} ${styles.color2}`}
-                      />
-                      Person 2 ID
-                    </Flex>
-                  }
-                  value={personId2}
-                  onChange={(e) => setPersonId2(e.target.value)}
-                  error={error2}
-                  placeholder="e.g. 2007VALK01"
-                />
-              </Grid.Col>
-              <Grid.Col visibleFrom="xs" span={3} />
-              <Grid.Col visibleFrom="xs" span={3} />
-              <Grid.Col span={{ base: 12, xs: 6 }}>
-                <Button color="teal" type="submit" fullWidth>
-                  Search
-                </Button>
-              </Grid.Col>
-              <Grid.Col visibleFrom="xs" span={3} />
-            </Grid>
-          </form>
-        </Flex>
-
-        {isLoading ? (
-          <Center>
-            <Loader color="teal" />
-          </Center>
-        ) : isError ? (
-          <Center>
-            <Text c="red">Failed to load data.</Text>
-          </Center>
-        ) : (
-          h2hData &&
-          urlPersonId1 &&
-          urlPersonId2 &&
-          submittedId1 &&
-          submittedId2 && (
-            <>
-              <Flex justify="center" align="center" mt="xl" pt="xl" mb="lg">
-                <TotalScoreCard
-                  totalScore1={totalScore1}
-                  totalScore2={totalScore2}
-                />
-              </Flex>
-              <EventAccordion
-                eventScores={eventScores}
-                h2hData={h2hData || []}
-                personId1={submittedId1}
-                personId2={submittedId2}
-              />
-            </>
-          )
-        )}
+    <>
+      <Container size="lg" mb="xl">
+        <Title>Head to Head</Title>
       </Container>
-    </Container>
+      <Container size="lg" pb="xl">
+        <Text size="lg">
+          This page compares the performance of two competitors across all their encounters in specific rounds of the same competition.
+        </Text>
+        <List>
+          <List.Item>
+            It shows the head-to-head results for each event where both competitors participated in the same round.
+          </List.Item>
+          <List.Item>
+            Detailed information about the competition, including round placements and overall matchups, is also provided for each player.
+          </List.Item>
+        </List>
+      </Container>
+
+      <Container size="lg">
+        <Container size="lg" mt="xl" px="0">
+          <Flex direction="column" mb="lg">
+            <form onSubmit={handleFormSubmit}>
+              <Grid>
+                <Grid.Col visibleFrom="xs" span={3} />
+                <Grid.Col span={{ base: 6, xs: 3 }}>
+                  <TextInput
+                    label={
+                      <Flex align="center">
+                        <IconCircleFilled
+                          size={16}
+                          className={`${styles.iconCircle} ${styles.color1}`}
+                        />
+                        Person 1 ID
+                      </Flex>
+                    }
+                    value={personId1}
+                    onChange={(e) => setPersonId1(e.target.value)}
+                    error={error1}
+                    placeholder="e.g. 2009ZEMD01"
+                  />
+                </Grid.Col>
+                <Grid.Col span={{ base: 6, xs: 3 }}>
+                  <TextInput
+                    label={
+                      <Flex align="center">
+                        <IconCircleFilled
+                          size={16}
+                          className={`${styles.iconCircle} ${styles.color2}`}
+                        />
+                        Person 2 ID
+                      </Flex>
+                    }
+                    value={personId2}
+                    onChange={(e) => setPersonId2(e.target.value)}
+                    error={error2}
+                    placeholder="e.g. 2007VALK01"
+                  />
+                </Grid.Col>
+                <Grid.Col visibleFrom="xs" span={3} />
+                <Grid.Col visibleFrom="xs" span={3} />
+                <Grid.Col span={{ base: 12, xs: 6 }}>
+                  <Button color="teal" type="submit" fullWidth>
+                    Search
+                  </Button>
+                </Grid.Col>
+                <Grid.Col visibleFrom="xs" span={3} />
+              </Grid>
+            </form>
+          </Flex>
+
+          {isLoading ? (
+            <Center>
+              <Loader color="teal" />
+            </Center>
+          ) : isError ? (
+            <Center>
+              <Text c="red">Failed to load data.</Text>
+            </Center>
+          ) : (
+            h2hData &&
+            urlPersonId1 &&
+            urlPersonId2 &&
+            submittedId1 &&
+            submittedId2 && (
+              <>
+                <Flex justify="center" align="center" mt="xl" pt="xl" mb="lg">
+                  <TotalScoreCard
+                    totalScore1={totalScore1}
+                    totalScore2={totalScore2}
+                  />
+                </Flex>
+                <EventAccordion
+                  eventScores={eventScores}
+                  h2hData={h2hData || []}
+                  personId1={submittedId1}
+                  personId2={submittedId2}
+                />
+              </>
+            )
+          )}
+        </Container>
+      </Container>
+    </>
   );
 }

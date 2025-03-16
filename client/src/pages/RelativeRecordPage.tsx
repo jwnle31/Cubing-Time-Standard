@@ -8,6 +8,7 @@ import {
   Center,
   Flex,
   Title,
+  List,
 } from "@mantine/core";
 import { useFetchRr } from "../hooks/useFetchRelativeRecord";
 import { RelativeRecordTable } from "../components/tables/RelativeRecordTable";
@@ -71,8 +72,25 @@ export function RelativeRecordPage() {
 
   return (
     <>
-      <Container size="lg">
+      <Container size="lg" mb="xl">
         <Title>Relative PR</Title>
+      </Container>
+      <Container size="lg" pb="xl">
+        <Text size="lg">
+          This page visualizes how one's personal records compare to other WCA competitors.
+        </Text>
+
+        <List>
+          <List.Item>
+            Each cell represents the top % for one's PR in that event.
+          </List.Item>
+          <List.Item>
+            For example, if one's 3x3 average shows <b>25%</b>, that means the person is one of the top 25% performers with an official 3x3 average.
+          </List.Item>
+          <List.Item>
+            Each cell is based on all WCA competitors with at least one successful official result in that event.
+          </List.Item>
+        </List>
       </Container>
       <Container size="lg" mt="xl">
         <form onSubmit={handleFormSubmit}>
