@@ -19,7 +19,7 @@ const links = [
   { link: "/", label: "Distribution", matchType: "exact" },
   { link: "/personal-record", label: "Relative PR", matchType: "startsWith" },
   { link: "/head-to-head", label: "Head to Head", matchType: "startsWith" },
-  { link: "/coming-soon", label: "Coming Soon...", matchType: "exact" },
+  { link: "/about", label: "About", matchType: "exact" },
 ];
 
 export function Header() {

@@ -64,16 +64,6 @@ export function DistributionPage() {
           <Text size="xs">&nbsp;Only successful results are considered.</Text>
         </Flex>
       </Container>
-      <Container size="lg">
-        <h2>Acknowledgements</h2>
-        <ul>
-          <li>
-            These data are based on official personal record times from the
-            World Cube Association (WCA).
-          </li>
-          <li>Competition results are owned and managed by the WCA.</li>
-        </ul>
-      </Container>
     </>
   );
 }
