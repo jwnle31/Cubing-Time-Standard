@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import {
   Container,
   Text,
@@ -8,15 +8,14 @@ import {
   Center,
   Flex,
   Title,
-  List,
-} from "@mantine/core";
-import { useFetchRr } from "../hooks/useFetchRelativeRecord";
-import { RelativeRecordTable } from "../components/tables/RelativeRecordTable";
-import { calculateTealGradient } from "../utils/color";
-import { IconInfoCircle } from "@tabler/icons-react";
-import styles from "./RelativeRecordPage.module.css";
-import { validateWCAId } from "../utils/validate";
-import { useParams, useNavigate } from "react-router-dom";
+} from '@mantine/core';
+import { useFetchRr } from '../hooks/useFetchRelativeRecord';
+import { RelativeRecordTable } from '../components/tables/RelativeRecordTable';
+import { calculateTealGradient } from '../utils/color';
+import { IconInfoCircle } from '@tabler/icons-react';
+import styles from './RelativeRecordPage.module.css';
+import { validateWCAId } from '../utils/validate';
+import { useParams, useNavigate } from 'react-router-dom';
 
 export function RelativeRecordPage() {
   const { personId: initialPersonId } = useParams();
@@ -26,37 +25,37 @@ export function RelativeRecordPage() {
     ? validateWCAId(initialPersonId)
     : null;
 
-  const [personId, setPersonId] = useState<string>(initialPersonId || "");
+  const [personId, setPersonId] = useState<string>(initialPersonId || '');
   const [currentPersonId, setCurrentPersonId] = useState<string | null>(null);
-  const [sortBy, setSortBy] = useState<"single" | "average" | "eventId">(
-    "eventId"
+  const [sortBy, setSortBy] = useState<'single' | 'average' | 'eventId'>(
+    'eventId'
   );
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [error, setError] = useState<string | null>(validationError);
 
   const {
     data: singleData,
     isLoading: isLoadingSingle,
     isError: isErrorSingle,
-  } = useFetchRr(currentPersonId || "", "single");
+  } = useFetchRr(currentPersonId || '', 'single');
 
   const {
     data: avgData,
     isLoading: isLoadingAvg,
     isError: isErrorAvg,
-  } = useFetchRr(currentPersonId || "", "average");
+  } = useFetchRr(currentPersonId || '', 'average');
 
   useEffect(() => {
-    setPersonId(initialPersonId || "");
+    setPersonId(initialPersonId || '');
     if (initialPersonId) {
       setCurrentPersonId(validationError ? null : initialPersonId);
     }
   }, [initialPersonId, validationError]);
 
-  const handleSort = (column: "single" | "average" | "eventId") => {
+  const handleSort = (column: 'single' | 'average' | 'eventId') => {
     const isSameColumn = sortBy === column;
     const newDirection =
-      isSameColumn && sortDirection === "asc" ? "desc" : "asc";
+      isSameColumn && sortDirection === 'asc' ? 'desc' : 'asc';
     setSortBy(column);
     setSortDirection(newDirection);
   };
@@ -77,20 +76,22 @@ export function RelativeRecordPage() {
       </Container>
       <Container size="lg" pb="xl">
         <Text size="lg">
-          This page visualizes how one's personal records compare to other WCA competitors.
+          This page visualizes how one's personal records compare to other WCA
+          competitors.
         </Text>
 
-        <List>
-          <List.Item>
-            Each cell represents the top % for one's PR in that event.
-          </List.Item>
-          <List.Item>
-            For example, if one's 3x3 average shows <b>25%</b>, that means the person is one of the top 25% performers with an official 3x3 average.
-          </List.Item>
-          <List.Item>
-            Each cell is based on all WCA competitors with at least one successful official result in that event.
-          </List.Item>
-        </List>
+        <ul>
+          <li>Each cell represents the top % for one's PR in that event.</li>
+          <li>
+            For example, if one's 3x3 average shows <b>25%</b>, that means the
+            person is one of the top 25% performers with an official 3x3
+            average.
+          </li>
+          <li>
+            Each cell is based on all WCA competitors with at least one
+            successful official result in that event.
+          </li>
+        </ul>
       </Container>
       <Container size="lg" mt="xl">
         <form onSubmit={handleFormSubmit}>

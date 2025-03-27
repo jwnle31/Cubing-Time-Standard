@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import {
   Container,
   Flex,
@@ -11,17 +11,16 @@ import {
   Grid,
   Center,
   Loader,
-  List,
-} from "@mantine/core";
-import { useFetchH2H } from "../hooks/useFetchHeadToHead";
-import { IconCircleFilled } from "@tabler/icons-react";
-import { EVENTS, EVENTNAMES } from "../globals/wcaInfo";
-import { MatchTable } from "../components/tables/MatchTable";
-import { validateWCAId } from "../utils/validate";
-import clsx from "clsx";
-import styles from "./HeadToHeadPage.module.css";
-import type { H2HInfo } from "../hooks/useFetchHeadToHead";
-import { useParams, useNavigate } from "react-router-dom";
+} from '@mantine/core';
+import { useFetchH2H } from '../hooks/useFetchHeadToHead';
+import { IconCircleFilled } from '@tabler/icons-react';
+import { EVENTS, EVENTNAMES } from '../globals/wcaInfo';
+import { MatchTable } from '../components/tables/MatchTable';
+import { validateWCAId } from '../utils/validate';
+import clsx from 'clsx';
+import styles from './HeadToHeadPage.module.css';
+import type { H2HInfo } from '../hooks/useFetchHeadToHead';
+import { useParams, useNavigate } from 'react-router-dom';
 
 export function HeadToHeadPage() {
   const { personId1: urlPersonId1, personId2: urlPersonId2 } = useParams();
@@ -30,8 +29,8 @@ export function HeadToHeadPage() {
   const validationError1 = urlPersonId1 ? validateWCAId(urlPersonId1) : null;
   const validationError2 = urlPersonId2 ? validateWCAId(urlPersonId2) : null;
 
-  const [personId1, setPersonId1] = useState<string>(urlPersonId1 || "");
-  const [personId2, setPersonId2] = useState<string>(urlPersonId2 || "");
+  const [personId1, setPersonId1] = useState<string>(urlPersonId1 || '');
+  const [personId2, setPersonId2] = useState<string>(urlPersonId2 || '');
   const [submittedId1, setSubmittedId1] = useState<string | null>(null);
   const [submittedId2, setSubmittedId2] = useState<string | null>(null);
   const [error1, setError1] = useState<string | null>(validationError1);
@@ -41,11 +40,11 @@ export function HeadToHeadPage() {
     data: h2hData,
     isLoading,
     isError,
-  } = useFetchH2H(submittedId1 || "", submittedId2 || "");
+  } = useFetchH2H(submittedId1 || '', submittedId2 || '');
 
   useEffect(() => {
-    setPersonId1(urlPersonId1 || "");
-    setPersonId2(urlPersonId2 || "");
+    setPersonId1(urlPersonId1 || '');
+    setPersonId2(urlPersonId2 || '');
     if (urlPersonId1 && urlPersonId2) {
       setSubmittedId1(validationError1 ? null : urlPersonId1);
       setSubmittedId2(validationError2 ? null : urlPersonId2);
@@ -181,16 +180,19 @@ export function HeadToHeadPage() {
       </Container>
       <Container size="lg" pb="xl">
         <Text size="lg">
-          This page compares the performance of two competitors across all their encounters in specific rounds of the same competition.
+          This page compares the performance of two competitors across all their
+          encounters in specific rounds of the same competition.
         </Text>
-        <List>
-          <List.Item>
-            It shows the head-to-head results for each event where both competitors participated in the same round.
-          </List.Item>
-          <List.Item>
-            Detailed information about the competition, including round placements and overall matchups, is also provided for each player.
-          </List.Item>
-        </List>
+        <ul>
+          <li>
+            It shows the head-to-head results for each event where both
+            competitors participated in the same round.
+          </li>
+          <li>
+            Detailed information about the competition, including round
+            placements and overall matchups, is also provided for each player.
+          </li>
+        </ul>
       </Container>
 
       <Container size="lg">
