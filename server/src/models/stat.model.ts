@@ -1,10 +1,7 @@
-import { RowDataPacket } from "mysql2";
+import { RowDataPacket } from 'mysql2';
 
-export interface ArInternalMetadata extends RowDataPacket {
-  key: string;
-  value: string;
-  created_at: string;
-  updated_at: string;
+export interface UpdateTime extends RowDataPacket {
+  UPDATE_TIME: string;
 }
 
 export interface Rank extends RowDataPacket {

@@ -1,11 +1,11 @@
 import { Container, Flex, ScrollArea, Text, Title } from '@mantine/core';
 import PercAvgTable from '../components/tables/PercAvgTable';
 import PercSingleTable from '../components/tables/PercSingleTable';
-import { useFetchMetadata } from '../hooks/useFetchMetadata';
+import { useFetchUpdateTime } from '../hooks/useFetchUpdateTime';
 import { IconInfoCircle } from '@tabler/icons-react';
 
 export function DistributionPage() {
-  const { data } = useFetchMetadata();
+  const { data } = useFetchUpdateTime();
 
   return (
     <>
@@ -37,7 +37,7 @@ export function DistributionPage() {
         <Text>
           Last updated:{' '}
           {data ? (
-            data[0]['updated_at'].split('T')[0]
+            data[0]['UPDATE_TIME'].split('T')[0]
           ) : (
             <span>{'\u00A0'.repeat(18)}</span>
           )}

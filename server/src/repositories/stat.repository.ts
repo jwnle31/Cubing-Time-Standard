@@ -1,13 +1,13 @@
-import connection from "../db";
+import connection from '../db';
 import {
-  ArInternalMetadata,
+  UpdateTime,
   Rank,
   RelativeRecord,
   H2HInfo,
-} from "../models/stat.model";
+} from '../models/stat.model';
 
 interface IStatRepository {
-  getMetadata(): Promise<ArInternalMetadata[]>;
+  getUpdateTime(): Promise<UpdateTime[]>;
   getDistribution(searchParams: {
     eventId: string;
     percents?: number[];
@@ -23,10 +23,15 @@ interface IStatRepository {
 }
 
 class StatRepository implements IStatRepository {
-  async getMetadata(): Promise<ArInternalMetadata[]> {
-    const query = `SELECT * FROM ar_internal_metadata;`;
+  async getUpdateTime(): Promise<UpdateTime[]> {
+    const query = `
+      SELECT 
+        UPDATE_TIME 
+      FROM 
+        information_schema.tables 
+      WHERE TABLE_NAME = 'RanksSingle';`;
     try {
-      const [rows] = await connection.execute<ArInternalMetadata[]>(query);
+      const [rows] = await connection.execute<UpdateTime[]>(query);
       return rows;
     } catch (err) {
       throw err;
@@ -39,10 +44,10 @@ class StatRepository implements IStatRepository {
     type: string;
   }): Promise<Rank[]> {
     const tableName =
-      searchParams.type === "single" ? "RanksSingle" : "RanksAverage";
+      searchParams.type === 'single' ? 'RanksSingle' : 'RanksAverage';
     const percents = searchParams.percents
       .map((p) => `WHEN pr <= ${(p * 0.01).toFixed(2)} THEN ${p}`)
-      .join("\n");
+      .join('\n');
 
     const query = `
       SELECT
@@ -71,7 +76,7 @@ class StatRepository implements IStatRepository {
     type: string;
   }): Promise<RelativeRecord[]> {
     const tableName =
-      searchParams.type === "single" ? "RanksSingle" : "RanksAverage";
+      searchParams.type === 'single' ? 'RanksSingle' : 'RanksAverage';
 
     const query = `SELECT eventId, pr FROM ${tableName} WHERE personId = '${searchParams.personId}';`;
 

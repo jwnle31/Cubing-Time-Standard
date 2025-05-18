@@ -1,11 +1,11 @@
-import axios from "axios";
-import { cache } from "../middlewares/cacheMiddleware";
-import { EVENTS } from "../globals/wcaInfo";
-import { PERCENTS } from "../globals/appInfo";
+import axios from 'axios';
+import { cache } from '../middlewares/cacheMiddleware';
+import { EVENTS } from '../globals/wcaInfo';
+import { PERCENTS } from '../globals/appInfo';
 
-const PERCENTS_STR = PERCENTS.join(",");
+const PERCENTS_STR = PERCENTS.join(',');
 
-const endpointTypes = ["single", "average"];
+const endpointTypes = ['single', 'average'];
 
 const distributionEndpoints: string[] = EVENTS.flatMap((event) =>
   endpointTypes.map(
@@ -13,7 +13,7 @@ const distributionEndpoints: string[] = EVENTS.flatMap((event) =>
   )
 );
 
-const endpoints: string[] = [...distributionEndpoints, "/api/stats/metadata"];
+const endpoints: string[] = [...distributionEndpoints, '/api/stats/updatetime'];
 
 export async function callEndpointsAndCache(): Promise<void> {
   for (const endpoint of endpoints) {
@@ -22,7 +22,7 @@ export async function callEndpointsAndCache(): Promise<void> {
     try {
       console.log(`Calling ${url}...`);
       const response = await axios.get(url, {
-        headers: { "X-Internal-Request": "true" },
+        headers: { 'X-Internal-Request': 'true' },
       });
 
       cache.set(endpoint, response.data);
@@ -40,5 +40,5 @@ export async function callEndpointsAndCache(): Promise<void> {
     }
   }
 
-  console.log("Final cache contents:", cache.keys());
+  console.log('Final cache contents:', cache.keys());
 }

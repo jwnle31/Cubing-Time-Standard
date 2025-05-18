@@ -1,14 +1,14 @@
-import { Request, Response } from "express";
-import statRepository from "../repositories/stat.repository";
+import { Request, Response } from 'express';
+import statRepository from '../repositories/stat.repository';
 
 export default class StatsController {
-  async getMetadata(req: Request, res: Response) {
+  async getUpdateTime(req: Request, res: Response) {
     try {
-      const metadata = await statRepository.getMetadata();
-      res.status(200).send(metadata);
+      const updateTime = await statRepository.getUpdateTime();
+      res.status(200).send(updateTime);
     } catch (err) {
       res.status(500).json({
-        message: "Internal Server Error!",
+        message: 'Internal Server Error!',
         err,
       });
     }
@@ -17,15 +17,15 @@ export default class StatsController {
   async getDistribution(req: Request, res: Response) {
     try {
       const { eventId, type } = req.params;
-      if (type !== "single" && type !== "average") {
+      if (type !== 'single' && type !== 'average') {
         res.status(400).json({
-          message: "Type has to be single or average.",
+          message: 'Type has to be single or average.',
         });
         return;
       }
 
       const percList = req.query.perc
-        ? (req.query.perc as string).split(",").map(Number)
+        ? (req.query.perc as string).split(',').map(Number)
         : Array.from({ length: 100 }, (_, i) => i + 1);
 
       const distribution = await statRepository.getDistribution({
@@ -36,7 +36,7 @@ export default class StatsController {
       res.status(200).send(distribution);
     } catch (err) {
       res.status(500).json({
-        message: "Internal Server Error!",
+        message: 'Internal Server Error!',
         err,
       });
     }
@@ -45,9 +45,9 @@ export default class StatsController {
   async getRr(req: Request, res: Response) {
     try {
       const { personId, type } = req.params;
-      if (type !== "single" && type !== "average") {
+      if (type !== 'single' && type !== 'average') {
         res.status(400).json({
-          message: "Type has to be single or average.",
+          message: 'Type has to be single or average.',
         });
         return;
       }
@@ -55,7 +55,7 @@ export default class StatsController {
       res.status(200).send(rr);
     } catch (err) {
       res.status(500).json({
-        message: "Internal Server Error!",
+        message: 'Internal Server Error!',
         err,
       });
     }
@@ -68,7 +68,7 @@ export default class StatsController {
       res.status(200).send(h2h);
     } catch (err) {
       res.status(500).json({
-        message: "Internal Server Error!",
+        message: 'Internal Server Error!',
         err,
       });
     }
